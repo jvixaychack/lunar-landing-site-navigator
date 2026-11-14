@@ -67,6 +67,44 @@ export function computeDteSummary(hourly: HourlyPoint[]): DteSummary {
   };
 }
 
+export interface ShadowSummary {
+  maxShadowHours: number;
+  totalShadowHours: number;
+  shadowWindowCount: number;
+}
+
+/**
+ * Computes shadow duration statistics (contiguous hours where sunVisible === false)
+ * from an hourly ephemeris series.
+ */
+export function computeShadowSummary(hourly: HourlyPoint[]): ShadowSummary {
+  let maxShadowHours = 0;
+  let totalShadowHours = 0;
+  let shadowWindowCount = 0;
+  let currentStreak = 0;
+
+  for (let i = 0; i < hourly.length; i++) {
+    if (!hourly[i].sunVisible) {
+      totalShadowHours += 1;
+      if (currentStreak === 0) {
+        shadowWindowCount += 1;
+      }
+      currentStreak += 1;
+      if (currentStreak > maxShadowHours) {
+        maxShadowHours = currentStreak;
+      }
+    } else {
+      currentStreak = 0;
+    }
+  }
+
+  return {
+    maxShadowHours,
+    totalShadowHours,
+    shadowWindowCount,
+  };
+}
+
 /**
  * Converts (azimuthDeg, elevationDeg) into 2D SVG coordinates on a polar sky-plot.
  * Azimuth 0° = North (top), 90° = East (right), clockwise.

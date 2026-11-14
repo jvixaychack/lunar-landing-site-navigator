@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useId, useMemo, useRef, useState } from 'react';
 import { Compass, Eye, EyeOff, ZoomIn, ZoomOut } from 'lucide-react';
 import type { HourlyPoint, LunarSite, ViewMode } from '../types/lunar';
 import {
@@ -7,11 +7,16 @@ import {
   polarToCartesian,
 } from '../utils/lunarAnalytics';
 
+export type ZoomMode = 'wide' | 'horizon';
+
 interface PolarHorizonSkyPlotProps {
   site: LunarSite;
   hourly: HourlyPoint[];
   hourIndex: number;
   viewMode: ViewMode;
+  zoomMode?: ZoomMode;
+  onToggleZoom?: () => void;
+  subtitle?: string;
 }
 
 const SVG_SIZE = 420;
@@ -19,15 +24,30 @@ const CX = SVG_SIZE / 2;
 const CY = SVG_SIZE / 2;
 const RADIUS = 162;
 
-type ZoomMode = 'wide' | 'horizon';
-
 export function PolarHorizonSkyPlot({
   site,
   hourly,
   hourIndex,
   viewMode,
+  zoomMode: controlledZoomMode,
+  onToggleZoom,
+  subtitle,
 }: PolarHorizonSkyPlotProps) {
-  const [zoomMode, setZoomMode] = useState<ZoomMode>('wide');
+  const [internalZoomMode, setInternalZoomMode] = useState<ZoomMode>('wide');
+  const zoomMode = controlledZoomMode ?? internalZoomMode;
+  const handleToggleZoom = () => {
+    if (onToggleZoom) {
+      onToggleZoom();
+    } else {
+      setInternalZoomMode((z) => (z === 'wide' ? 'horizon' : 'wide'));
+    }
+  };
+
+  const uid = useId().replace(/:/g, '');
+  const skyBgGradId = `skyBgGrad-${uid}`;
+  const terrainMaskGradId = `terrainMaskGrad-${uid}`;
+  const sunGlowId = `sunGlow-${uid}`;
+  const earthGlowId = `earthGlow-${uid}`;
   const [hoverInfo, setHoverInfo] = useState<{
     azimuthDeg: number;
     elevationDeg: number;
@@ -194,14 +214,14 @@ export function PolarHorizonSkyPlot({
               360° Polar Horizon Sky-Plot
             </h3>
             <p className="text-[11px] text-slate-400">
-              Terrain horizon mask + 30-day Sun &amp; Earth (libration) paths
+              {subtitle ?? 'Terrain horizon mask + 30-day Sun & Earth (libration) paths'}
             </p>
           </div>
         </div>
 
         <button
           type="button"
-          onClick={() => setZoomMode((z) => (z === 'wide' ? 'horizon' : 'wide'))}
+          onClick={handleToggleZoom}
           className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700/80 bg-slate-950/70 px-2.5 py-1 text-[11px] font-medium text-slate-300 transition hover:border-amber-500/50 hover:text-amber-300"
           title="Toggle radial elevation scale"
         >
@@ -245,24 +265,24 @@ export function PolarHorizonSkyPlot({
           aria-label={`360 degree polar horizon sky-plot for ${site.name}`}
         >
           <defs>
-            <radialGradient id="skyBgGrad" cx="50%" cy="50%" r="50%">
+            <radialGradient id={skyBgGradId} cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#0f172a" />
               <stop offset="75%" stopColor="#090f1d" />
               <stop offset="100%" stopColor="#020617" />
             </radialGradient>
-            <radialGradient id="terrainMaskGrad" cx="50%" cy="50%" r="50%">
+            <radialGradient id={terrainMaskGradId} cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#1e293b" stopOpacity="0.82" />
               <stop offset="65%" stopColor="#0f172a" stopOpacity="0.92" />
               <stop offset="100%" stopColor="#020617" stopOpacity="0.97" />
             </radialGradient>
-            <filter id="sunGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <filter id={sunGlowId} x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="3.5" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
-            <filter id="earthGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <filter id={earthGlowId} x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="3" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
@@ -276,7 +296,7 @@ export function PolarHorizonSkyPlot({
             cx={CX}
             cy={CY}
             r={RADIUS}
-            fill="url(#skyBgGrad)"
+            fill={`url(#${skyBgGradId})`}
             stroke="rgba(148, 163, 184, 0.25)"
             strokeWidth={1.2}
           />
@@ -285,7 +305,7 @@ export function PolarHorizonSkyPlot({
           {terrainFillPath && (
             <path
               d={terrainFillPath}
-              fill="url(#terrainMaskGrad)"
+              fill={`url(#${terrainMaskGradId})`}
               fillRule="evenodd"
             />
           )}
@@ -418,7 +438,7 @@ export function PolarHorizonSkyPlot({
                 fill={currentPoint.sunVisible ? '#fbbf24' : '#451a03'}
                 stroke={currentPoint.sunVisible ? '#fef3c7' : '#d97706'}
                 strokeWidth={1.8}
-                filter={currentPoint.sunVisible ? 'url(#sunGlow)' : undefined}
+                filter={currentPoint.sunVisible ? `url(#${sunGlowId})` : undefined}
               />
               <text
                 x={sunPos.x + 9}
@@ -460,7 +480,7 @@ export function PolarHorizonSkyPlot({
                 fill={currentPoint.earthVisible ? '#0284c7' : '#4c0519'}
                 stroke={currentPoint.earthVisible ? '#bae6fd' : '#fb7185'}
                 strokeWidth={1.8}
-                filter={currentPoint.earthVisible ? 'url(#earthGlow)' : undefined}
+                filter={currentPoint.earthVisible ? `url(#${earthGlowId})` : undefined}
               />
               {currentPoint.earthVisible && (
                 <circle cx={earthPos.x - 1.2} cy={earthPos.y - 1} r={1.8} fill="#34d399" />

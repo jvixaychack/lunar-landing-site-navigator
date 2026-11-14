@@ -1,6 +1,6 @@
 export type SeasonId = 'summer-solstice' | 'equinox' | 'winter-solstice' | string;
 
-export type ViewMode = 'planner' | 'explorer';
+export type ViewMode = 'planner' | 'explorer' | 'compare';
 
 export interface SiteCoordinates {
   latitudeDeg: number;
