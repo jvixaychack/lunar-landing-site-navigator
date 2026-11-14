@@ -139,6 +139,7 @@ export function LunarSouthPoleMap({
   const [fallbackReason, setFallbackReason] = useState<string | null>(null);
   const [cursorCoords, setCursorCoords] = useState<string>('90.0000°S, 0.0000°E');
   const [retryCounter, setRetryCounter] = useState<number>(0);
+  const [isMapCardOpen, setIsMapCardOpen] = useState<boolean>(false);
 
   // Initialize OpenLayers Map once
   useEffect(() => {
@@ -265,6 +266,7 @@ export function LunarSouthPoleMap({
       if (feature) {
         const site = feature.get('siteData') as LunarSite | undefined;
         if (site) {
+          setIsMapCardOpen(true);
           onSelectSite(site);
           return;
         }
@@ -372,13 +374,18 @@ export function LunarSouthPoleMap({
     source.addFeatures(features);
   }, [sites, selectedSite]);
 
+  // Re-open the map card when selectedSite changes
+  useEffect(() => {
+    setIsMapCardOpen(Boolean(selectedSite));
+  }, [selectedSite]);
+
   // Position popup & smoothly pan when a site is selected
   useEffect(() => {
     const overlay = popupOverlayRef.current;
     const view = mapRef.current?.getView();
     if (!overlay || !view) return;
 
-    if (!selectedSite) {
+    if (!selectedSite || !isMapCardOpen) {
       overlay.setPosition(undefined);
       return;
     }
@@ -392,7 +399,7 @@ export function LunarSouthPoleMap({
       center: coords,
       duration: 300,
     });
-  }, [selectedSite]);
+  }, [selectedSite, isMapCardOpen]);
 
   const handleRetryWms = () => {
     wacLayerRef.current?.getSource()?.refresh();
@@ -511,7 +518,7 @@ export function LunarSouthPoleMap({
 
       {/* Interactive Site Popup Overlay */}
       <div ref={popupContainerRef} className="z-20">
-        {selectedSite && (
+        {selectedSite && isMapCardOpen && (
           <div className="w-72 rounded-xl border border-slate-700 bg-slate-900/95 p-3.5 text-slate-100 shadow-2xl backdrop-blur-md">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
@@ -539,7 +546,11 @@ export function LunarSouthPoleMap({
               </div>
               <button
                 type="button"
-                onClick={() => onSelectSite(null)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMapCardOpen(false);
+                  popupOverlayRef.current?.setPosition(undefined);
+                }}
                 aria-label="Close site details"
                 className="rounded p-1 text-slate-400 hover:bg-slate-800 hover:text-white"
               >
