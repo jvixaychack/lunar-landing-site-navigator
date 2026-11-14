@@ -41,7 +41,7 @@ interface LunarSouthPoleMapProps {
 }
 
 const LUNASERV_WMS_URL = 'https://wms.im-ldi.com/';
-const FALLBACK_IMAGE_URL = '/data/lola-south-pole-fallback.png';
+const FALLBACK_IMAGE_URL = `${import.meta.env.BASE_URL}data/lola-south-pole-fallback.png`;
 const WMS_TIMEOUT_MS = 7000;
 
 function createPolarGridFeatures(): Feature[] {

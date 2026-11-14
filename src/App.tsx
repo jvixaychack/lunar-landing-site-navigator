@@ -31,10 +31,10 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/data/sites.json')
+    fetch(`${import.meta.env.BASE_URL}data/sites.json`)
       .then((res) => {
         if (!res.ok) {
-          throw new Error(`Failed to load /data/sites.json (${res.status})`);
+          throw new Error(`Failed to load data/sites.json (${res.status})`);
         }
         return res.json() as Promise<SitesDataset>;
       })
