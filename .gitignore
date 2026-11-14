@@ -1,7 +1,10 @@
-.venv/
-.cache/
-__pycache__/
-.pytest_cache/
-*.pyc
 node_modules/
 dist/
+.cache/
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.IMG
+.env
+.DS_Store
