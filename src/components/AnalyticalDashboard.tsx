@@ -53,15 +53,13 @@ export function AnalyticalDashboard({
 
   if (!site) {
     return (
-      <div className="flex h-full flex-col items-center justify-center rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-center">
+      <div className="flex h-full flex-col items-center justify-center rounded-md border border-slate-800 bg-slate-900 p-6 text-center">
         <Compass className="h-8 w-8 text-slate-600" />
         <h2 className="mt-3 text-sm font-semibold text-slate-200">
-          Select a Lunar South Pole Site
+          Select a site
         </h2>
         <p className="mt-1 max-w-xs text-xs text-slate-400">
-          Click any Artemis IV study or comparison site from the list or Lunaserv map to inspect
-          its 360° horizon sky plot, geometric sunlight availability, and Earth line-of-sight
-          windows.
+          Choose a site from the list or the map to see its horizon, sunlight and Earth visibility over 30 days.
         </p>
       </div>
     );
@@ -72,20 +70,20 @@ export function AnalyticalDashboard({
   if (!seasonData) {
     if (seasonResult.loading) {
       return (
-        <div className="flex h-full items-center justify-center rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-xs text-slate-400" role="status">
+        <div className="flex h-full items-center justify-center rounded-md border border-slate-800 bg-slate-900 p-6 text-xs text-slate-400" role="status">
           Calculating 30-day ephemeris for {startDate || 'selected date'}…
         </div>
       );
     }
     if (seasonResult.error) {
       return (
-        <div className="flex h-full items-center justify-center rounded-xl border border-rose-500/40 bg-rose-950/30 p-6 text-xs text-rose-200" role="alert">
+        <div className="flex h-full items-center justify-center rounded-md border border-rose-500/40 bg-rose-950/30 p-6 text-xs text-rose-200" role="alert">
           {seasonResult.error}
         </div>
       );
     }
     return (
-      <div className="flex h-full items-center justify-center rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-xs text-slate-400">
+      <div className="flex h-full items-center justify-center rounded-md border border-slate-800 bg-slate-900 p-6 text-xs text-slate-400">
         No ephemeris data available for {site.name}.
       </div>
     );
@@ -98,42 +96,29 @@ export function AnalyticalDashboard({
   );
 
   return (
-    <div className="flex h-full flex-col gap-3 overflow-y-auto pr-0.5">
-      {/* Site Summary Header */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3.5">
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <MapPin
-              className={`h-4 w-4 shrink-0 ${
-                isComparison ? 'text-sky-400' : 'text-amber-400'
-              }`}
-            />
-            <h2 className="text-sm font-bold text-white">{site.name}</h2>
-          </div>
-
+    <div className="flex h-full flex-col gap-5 overflow-y-auto rounded-md border border-slate-800 bg-slate-900 p-4">
+      {/* Site summary */}
+      <section>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+          <h2 className="font-mono text-3xl font-semibold leading-tight text-slate-50">{site.name}</h2>
           <span
-            className={`rounded px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-              isComparison
-                ? 'bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/30'
-                : 'bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30'
+            className={`inline-flex items-center gap-1.5 text-sm ${
+              isComparison ? 'text-sky-300' : site.role === 'custom' ? 'text-slate-200' : 'text-amber-300'
             }`}
           >
-            {isComparison ? 'Comparison Point' : site.role === 'custom' ? 'Custom Point' : 'Study Site'}
+            <MapPin className="h-3.5 w-3.5" />
+            {isComparison ? 'Comparison point' : site.role === 'custom' ? 'Custom point' : 'Study site'}
           </span>
         </div>
 
-        <p className="mt-1.5 text-xs leading-relaxed text-slate-300">
-          {site.description}
-        </p>
-
-        <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-slate-400">
+        <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-sm text-slate-300">
           <span>
             {formatLunarLatLon(
               site.coordinates.latitudeDeg,
               site.coordinates.longitudeDeg,
             )}
           </span>
-          <span className="inline-flex items-center gap-1 text-slate-300">
+          <span className="inline-flex items-center gap-1">
             <Mountain className="h-3.5 w-3.5 text-slate-500" />
             {site.coordinates.elevationM >= 0 ? '+' : ''}
             {site.coordinates.elevationM.toFixed(1)} m
@@ -144,7 +129,11 @@ export function AnalyticalDashboard({
             </span>
           )}
         </div>
-      </div>
+
+        <p className="mt-2.5 max-w-[62ch] text-sm leading-relaxed text-slate-400">
+          {site.description}
+        </p>
+      </section>
 
       {/* Good / Marginal / Poor screening for this site and window */}
       <ViabilityCard hourly={seasonData.hourly} />
@@ -160,7 +149,7 @@ export function AnalyticalDashboard({
         viewMode={viewMode}
       />
 
-      {/* 360° Polar Horizon Sky-Plot */}
+      {/* Horizon sky plot */}
       <PolarHorizonSkyPlot
         site={site}
         hourly={seasonData.hourly}

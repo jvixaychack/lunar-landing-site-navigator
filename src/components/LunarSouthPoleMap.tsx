@@ -66,10 +66,10 @@ function createPolarGridFeatures(): Feature[] {
         stroke: new Stroke({
           color:
             lat === -85
-              ? 'rgba(245, 158, 11, 0.7)'
+              ? 'rgba(229, 168, 32, 0.7)'
               : lat === -89
-                ? 'rgba(245, 158, 11, 0.25)'
-                : 'rgba(148, 163, 184, 0.18)',
+                ? 'rgba(229, 168, 32, 0.25)'
+                : 'rgba(195, 190, 176, 0.18)',
           width: lat === -85 ? 1.5 : 1,
           lineDash: lat === -85 ? [8, 5] : [4, 4],
         }),
@@ -87,7 +87,7 @@ function createPolarGridFeatures(): Feature[] {
     meridian.setStyle(
       new Style({
         stroke: new Stroke({
-          color: 'rgba(148, 163, 184, 0.16)',
+          color: 'rgba(195, 190, 176, 0.16)',
           width: 1,
         }),
       }),
@@ -100,11 +100,11 @@ function createPolarGridFeatures(): Feature[] {
 
 function getSiteStyle(site: LunarSite, isSelected: boolean): Style {
   const isComparison = site.role === 'comparison';
-  const baseColor = isComparison ? '#38bdf8' : '#f59e0b';
+  const baseColor = isComparison ? '#6aa9dc' : '#e5a820';
   const fillColor = isSelected
     ? isComparison
-      ? '#0ea5e9'
-      : '#fbbf24'
+      ? '#4a8ec9'
+      : '#efb93a'
     : baseColor;
 
   return new Style({
@@ -112,7 +112,7 @@ function getSiteStyle(site: LunarSite, isSelected: boolean): Style {
       radius: isSelected ? 9 : 6.5,
       fill: new Fill({ color: fillColor }),
       stroke: new Stroke({
-        color: isSelected ? '#ffffff' : '#0f172a',
+        color: isSelected ? '#ffffff' : '#1f1e1b',
         width: isSelected ? 2.5 : 2,
       }),
     }),
@@ -120,8 +120,8 @@ function getSiteStyle(site: LunarSite, isSelected: boolean): Style {
       text: site.name,
       offsetY: -16,
       font: `${isSelected ? '700' : '600'} 11px ui-sans-serif, system-ui, sans-serif`,
-      fill: new Fill({ color: isSelected ? '#fef3c7' : '#e2e8f0' }),
-      stroke: new Stroke({ color: 'rgba(2, 6, 23, 0.9)', width: 3 }),
+      fill: new Fill({ color: isSelected ? '#fbeac4' : '#ddd8cb' }),
+      stroke: new Stroke({ color: 'rgba(26, 25, 23, 0.9)', width: 3 }),
     }),
   });
 }
@@ -441,36 +441,36 @@ export function LunarSouthPoleMap({
   };
 
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-xl border border-slate-800 bg-slate-950 shadow-2xl">
+    <div className="relative h-full w-full overflow-hidden rounded-md border border-slate-800 bg-slate-950">
       {/* OpenLayers Canvas */}
       <div ref={mapContainerRef} className="h-full w-full" />
 
       {/* Top-Left Layer Switcher & WMS Status */}
       <div className="pointer-events-none absolute top-3 left-12 z-10 flex flex-wrap items-center gap-2">
-        <div className="pointer-events-auto flex items-center gap-1 rounded-lg border border-slate-700/80 bg-slate-900/85 p-1 backdrop-blur-md">
+        <div className="pointer-events-auto flex items-center rounded-md border border-slate-700 bg-slate-900">
           <button
             type="button"
             onClick={() => setActiveBaseLayer('wac')}
-            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition ${
+            className={`flex items-center gap-1.5 rounded-sm px-3 py-2 text-sm font-medium transition ${
               activeBaseLayer === 'wac'
-                ? 'bg-amber-500 text-slate-950 shadow-sm'
+                ? 'bg-slate-100 text-slate-950'
                 : 'text-slate-300 hover:bg-slate-800 hover:text-white'
             }`}
           >
             <Layers className="h-3.5 w-3.5" />
-            LROC WAC Imagery
+            Imagery
           </button>
           <button
             type="button"
             onClick={() => setActiveBaseLayer('lola')}
-            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition ${
+            className={`flex items-center gap-1.5 rounded-sm px-3 py-2 text-sm font-medium transition ${
               activeBaseLayer === 'lola'
-                ? 'bg-amber-500 text-slate-950 shadow-sm'
+                ? 'bg-slate-100 text-slate-950'
                 : 'text-slate-300 hover:bg-slate-800 hover:text-white'
             }`}
           >
             <Mountain className="h-3.5 w-3.5" />
-            LOLA Shaded Relief
+            Shaded relief
           </button>
         </div>
 
@@ -479,10 +479,10 @@ export function LunarSouthPoleMap({
           onClick={() => setShowIllumination((v) => !v)}
           disabled={wmsStatus === 'fallback'}
           title="Toggle LROC WAC Polar Illumination overlay"
-          className={`pointer-events-auto flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium backdrop-blur-md transition ${
+          className={`pointer-events-auto flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium transition ${
             showIllumination && wmsStatus !== 'fallback'
-              ? 'border-amber-400/60 bg-amber-500/20 text-amber-200'
-              : 'border-slate-700/80 bg-slate-900/85 text-slate-300 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-45'
+              ? 'border-amber-400 bg-slate-900 text-amber-300'
+              : 'border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-45'
           }`}
         >
           <Sun className="h-3.5 w-3.5" />
@@ -493,12 +493,12 @@ export function LunarSouthPoleMap({
       {/* Top-Right Status Badge & Center Pole Button */}
       <div className="pointer-events-none absolute top-3 right-3 z-10 flex items-center gap-2">
         <div
-          className={`pointer-events-auto flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium backdrop-blur-md ${
+          className={`pointer-events-auto flex items-center gap-1.5 rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium ${
             wmsStatus === 'live'
-              ? 'border-emerald-500/40 bg-emerald-950/80 text-emerald-300'
+              ? 'text-emerald-300'
               : wmsStatus === 'loading'
-                ? 'border-sky-500/40 bg-sky-950/80 text-sky-300'
-                : 'border-amber-500/50 bg-amber-950/85 text-amber-200'
+                ? 'text-slate-300'
+                : 'text-rose-300'
           }`}
           title={fallbackReason ?? 'ASU/NASA Lunaserv WMS'}
         >
@@ -507,16 +507,16 @@ export function LunarSouthPoleMap({
           {wmsStatus === 'fallback' && <AlertTriangle className="h-3.5 w-3.5" />}
           <span>
             {wmsStatus === 'live'
-              ? 'Lunaserv WMS'
+              ? 'Live imagery'
               : wmsStatus === 'loading'
-                ? 'Connecting WMS…'
-                : 'Local LOLA Fallback'}
+                ? 'Connecting…'
+                : 'Offline: terrain only'}
           </span>
           {wmsStatus === 'fallback' && (
                                 <button
               type="button"
               onClick={handleRetryWms}
-              className="ml-1 rounded bg-amber-500/20 px-1.5 py-0.5 text-[11px] font-semibold text-amber-200 hover:bg-amber-500/35"
+              className="ml-1 text-sm font-semibold text-slate-100 underline underline-offset-4"
             >
               Retry
             </button>
@@ -528,20 +528,20 @@ export function LunarSouthPoleMap({
           onClick={handleResetView}
           title="Re-center map on the South Pole (90°S)"
           aria-label="Re-center map on the South Pole"
-          className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-lg border border-slate-700/80 bg-slate-900/85 text-slate-200 backdrop-blur-md transition hover:border-amber-500/50 hover:text-amber-300"
+          className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-md border border-slate-700 bg-slate-900 text-slate-200 transition hover:border-slate-400 hover:text-white"
         >
           <LocateFixed className="h-4 w-4" />
         </button>
       </div>
 
       {pickMode && (
-        <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full border border-amber-500/50 bg-slate-900/90 px-3 py-1 text-[11px] font-medium text-amber-200 backdrop-blur-md">
-          Pick mode: click the map poleward of 85°S
+        <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-md border border-slate-100 bg-slate-900 px-3 py-1.5 text-sm font-medium text-slate-100">
+          Click the map to place a point (poleward of 85°S)
         </div>
       )}
 
       {/* Bottom-Right Projection & Cursor Telemetry */}
-      <div className="pointer-events-none absolute right-3 bottom-8 z-10 flex items-center gap-3 rounded-lg border border-slate-700/70 bg-slate-900/85 px-3 py-1.5 font-mono text-[11px] text-slate-300 backdrop-blur-md">
+      <div className="pointer-events-none absolute right-3 bottom-8 z-10 flex items-center gap-3 rounded-md border border-slate-700 bg-slate-900 px-3 py-1.5 font-mono text-sm text-slate-300">
         <span className="text-slate-400">{LUNAR_SOUTH_POLE_SRS}</span>
         <span className="text-slate-600">|</span>
         <span>{cursorCoords}</span>
@@ -550,7 +550,7 @@ export function LunarSouthPoleMap({
       {/* Interactive Site Popup Overlay */}
       <div ref={popupContainerRef} className="z-20">
         {selectedSite && isMapCardOpen && (
-          <div className="w-72 rounded-xl border border-slate-700 bg-slate-900/95 p-3.5 text-slate-100 shadow-2xl backdrop-blur-md">
+          <div className="w-64 rounded-md border border-slate-600 bg-slate-900 p-3 text-slate-100 shadow-lg shadow-black/50">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
                 <MapPin
@@ -561,14 +561,12 @@ export function LunarSouthPoleMap({
                   }`}
                 />
                 <div>
-                  <h3 className="text-sm font-semibold leading-tight text-white">
+                  <h3 className="font-mono text-xl font-semibold leading-tight text-white">
                     {selectedSite.name}
                   </h3>
                   <span
-                    className={`mt-0.5 inline-block rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
-                      selectedSite.role === 'comparison'
-                        ? 'bg-sky-500/15 text-sky-300'
-                        : 'bg-amber-500/15 text-amber-300'
+                    className={`mt-0.5 inline-block text-xs capitalize ${
+                      selectedSite.role === 'comparison' ? 'text-sky-300' : 'text-slate-400'
                     }`}
                   >
                     {selectedSite.role}
@@ -589,9 +587,9 @@ export function LunarSouthPoleMap({
               </button>
             </div>
 
-            <div className="mt-2.5 grid grid-cols-2 gap-2 rounded-lg border border-slate-800 bg-slate-950/70 p-2 font-mono text-[11px]">
+            <div className="mt-2.5 grid grid-cols-2 gap-2 border-t border-slate-700 pt-2 font-mono text-sm">
               <div>
-                <div className="text-[10px] uppercase text-slate-500">Coordinates</div>
+                <div className="font-sans text-xs text-slate-500">Coordinates</div>
                 <div className="text-slate-200">
                   {formatLunarLatLon(
                     selectedSite.coordinates.latitudeDeg,
@@ -600,7 +598,7 @@ export function LunarSouthPoleMap({
                 </div>
               </div>
               <div>
-                <div className="text-[10px] uppercase text-slate-500">Elevation</div>
+                <div className="font-sans text-xs text-slate-500">Elevation</div>
                 <div className="text-slate-200">
                   {selectedSite.coordinates.elevationM >= 0 ? '+' : ''}
                   {selectedSite.coordinates.elevationM.toFixed(1)} m
@@ -608,9 +606,6 @@ export function LunarSouthPoleMap({
               </div>
             </div>
 
-            <p className="mt-2.5 text-xs leading-relaxed text-slate-300">
-              {selectedSite.description}
-            </p>
           </div>
         )}
       </div>

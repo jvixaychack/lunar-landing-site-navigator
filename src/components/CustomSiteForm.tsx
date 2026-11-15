@@ -16,7 +16,7 @@ interface CustomSiteFormProps {
 }
 
 const inputClass =
-  'w-full rounded-md border border-slate-700/80 bg-slate-950/80 px-2 py-1 font-mono text-[11px] text-slate-100 placeholder:text-slate-600 focus:border-amber-500/60 focus:outline-none';
+  'w-full rounded-md border border-slate-700/80 bg-slate-950 px-2 py-1 font-mono text-xs text-slate-100 placeholder:text-slate-600 focus:border-slate-300 focus:outline-none';
 
 export function CustomSiteForm({
   onAdd,
@@ -79,18 +79,18 @@ export function CustomSiteForm({
   }, [pickRequest]);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-1.5 rounded-lg border border-slate-800/80 bg-slate-950/50 p-2.5">
+    <form onSubmit={handleSubmit} className="space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-300">
-          <Crosshair className="h-3.5 w-3.5 text-amber-400" />
-          Custom coordinates
+        <h3 className="flex items-center gap-1.5 text-sm font-semibold text-slate-100">
+          <Crosshair className="h-3.5 w-3.5 text-slate-400" />
+          Check any point
         </h3>
         {customSiteCount > 0 && (
           <button
             type="button"
             onClick={onClear}
             disabled={busy}
-            className="inline-flex items-center gap-1 text-[10px] text-slate-400 hover:text-rose-300 disabled:opacity-50"
+            className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-rose-300 disabled:opacity-50"
           >
             <Trash2 className="h-3 w-3" />
             Clear ({customSiteCount})
@@ -99,7 +99,7 @@ export function CustomSiteForm({
       </div>
 
       <div className="grid grid-cols-2 gap-1.5">
-        <label className="text-[10px] text-slate-400">
+        <label className="text-[11px] text-slate-400">
           Latitude (°)
           <input
             className={inputClass}
@@ -111,7 +111,7 @@ export function CustomSiteForm({
             aria-label="Latitude in degrees, south negative"
           />
         </label>
-        <label className="text-[10px] text-slate-400">
+        <label className="text-[11px] text-slate-400">
           Longitude (°E)
           <input
             className={inputClass}
@@ -137,31 +137,31 @@ export function CustomSiteForm({
         type="button"
         onClick={onTogglePickMode}
         aria-pressed={pickMode}
-        className={`inline-flex w-full items-center justify-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-semibold transition ${
+        className={`inline-flex w-full items-center justify-center gap-1.5 rounded-md border px-2 py-1.5 text-sm font-medium transition ${
           pickMode
-            ? 'border-amber-400 bg-amber-500/30 text-amber-100'
-            : 'border-slate-700/80 bg-slate-900/70 text-slate-200 hover:border-amber-500/50'
+            ? 'border-slate-100 bg-slate-100 text-slate-950'
+            : 'border-slate-600 bg-transparent text-slate-200 hover:border-slate-300'
         }`}
       >
         <MousePointerClick className="h-3 w-3" />
-        {pickMode ? 'Picking: click the map (click to stop)' : 'Pick on map'}
+        {pickMode ? 'Click the map to place a point' : 'Pick on the map'}
       </button>
 
       <button
         type="submit"
         disabled={busy}
-        className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-amber-500/50 bg-amber-500/15 px-2 py-1 text-[11px] font-semibold text-amber-200 transition hover:bg-amber-500/25 disabled:opacity-60"
+        className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-slate-100 bg-slate-100 px-2 py-1.5 text-sm font-semibold text-slate-950 transition hover:bg-white disabled:opacity-60"
       >
         {busy && <Loader2 className="h-3 w-3 animate-spin" />}
         {busy ? 'Loading terrain…' : 'Add site'}
       </button>
 
       {error ? (
-        <p role="alert" className="text-[10px] leading-snug text-rose-300">
+        <p role="alert" className="text-[11px] leading-snug text-rose-300">
           {error}
         </p>
       ) : (
-        <p className="text-[10px] leading-snug text-slate-500">
+        <p className="text-[11px] leading-snug text-slate-500">
           Poleward of {Math.abs(CUSTOM_SITE_MAX_LATITUDE_DEG)}°S. The first point downloads about 13 MB of terrain
           tiles; nearby points reuse them.
         </p>

@@ -6,7 +6,6 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  GitCompareArrows,
   MapPin,
   Moon,
   Mountain,
@@ -172,7 +171,7 @@ export function CompareView({
   if (!resolvedSiteA || !resolvedSiteB || !dataA || !dataB || !shadowA || !shadowB || !earthVisibilityA || !earthVisibilityB) {
     const error = resultA.error ?? resultB.error;
     return (
-      <div className={`flex h-full items-center justify-center rounded-xl border p-6 text-xs ${error ? 'border-rose-500/40 bg-rose-950/30 text-rose-200' : 'border-slate-800 bg-slate-900/60 text-slate-400'}`} role={error ? 'alert' : 'status'}>
+      <div className={`flex h-full items-center justify-center rounded-md border p-6 text-xs ${error ? 'border-rose-500/40 bg-rose-950/30 text-rose-200' : 'border-slate-800 bg-slate-900 text-slate-400'}`} role={error ? 'alert' : 'status'}>
         {error ?? (resultA.loading || resultB.loading ? 'Calculating 30-day comparison ephemerides…' : 'Loading comparison scenarios…')}
       </div>
     );
@@ -267,7 +266,7 @@ export function CompareView({
   ) => {
     if (Math.abs(delta) < 0.05) {
       return (
-        <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-medium text-slate-400">
+        <span className="rounded bg-slate-800 text-[11px] font-medium text-slate-400">
           {zeroLabel}
         </span>
       );
@@ -275,10 +274,10 @@ export function CompareView({
     const bIsBetter = higherIsBetter ? delta > 0 : delta < 0;
     return (
       <span
-        className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${
+        className={`rounded text-[11px] font-semibold ${
           bIsBetter
-            ? 'bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/30'
-            : 'bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30'
+            ? 'text-sky-300'
+            : 'text-amber-300'
         }`}
       >
         {bIsBetter ? 'B Favorable' : 'A Favorable'}
@@ -289,18 +288,15 @@ export function CompareView({
   return (
     <div className="flex h-full flex-col gap-3 overflow-y-auto pr-0.5">
       {/* Top Controls: Mode Switcher, Presets & Scenario Pickers */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3.5">
+      <div className="rounded-md border border-slate-800 bg-slate-900 p-3.5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/15 text-amber-400 ring-1 ring-amber-500/30">
-              <GitCompareArrows className="h-4 w-4" />
-            </div>
             <div>
-              <h2 className="text-sm font-bold tracking-tight text-white">
-                Compare Sites &amp; Launch Windows
+              <h2 className="font-mono text-2xl font-semibold leading-tight text-slate-50">
+                Compare two sites
               </h2>
-              <p className="text-[11px] text-slate-400">
-                Side-by-side horizon sky-plots and solar/Earth-visibility trade-offs
+              <p className="text-xs text-slate-400">
+                Horizon, sunlight and Earth visibility side by side
               </p>
             </div>
           </div>
@@ -308,7 +304,7 @@ export function CompareView({
           {/* Mode Toggle + Quick Presets */}
           <div className="flex flex-wrap items-center gap-2">
             <div
-              className="flex items-center rounded-lg border border-slate-800 bg-slate-950/80 p-0.5"
+              className="flex items-center rounded-lg border border-slate-800 bg-slate-950 p-0.5"
               role="group"
               aria-label="Comparison mode"
             >
@@ -317,7 +313,7 @@ export function CompareView({
                 onClick={() => setCompareMode('sites')}
                 className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition ${
                   compareMode === 'sites'
-                    ? 'bg-amber-500/20 text-amber-300 ring-1 ring-amber-500/40'
+                    ? 'bg-slate-700 text-white'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -329,7 +325,7 @@ export function CompareView({
                 onClick={() => setCompareMode('windows')}
                 className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition ${
                   compareMode === 'windows'
-                    ? 'bg-sky-500/20 text-sky-300 ring-1 ring-sky-500/40'
+                    ? 'bg-slate-700 text-white'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -341,14 +337,14 @@ export function CompareView({
             <button
               type="button"
               onClick={applyShackletonVsCraterPreset}
-              className="rounded-lg border border-slate-700/80 bg-slate-950/70 px-2.5 py-1 text-[11px] font-medium text-slate-300 transition hover:border-amber-500/50 hover:text-amber-300"
+              className="rounded-lg border border-slate-700/80 bg-slate-950 px-2.5 py-1 text-xs font-medium text-slate-300 transition hover:border-slate-400 hover:text-white"
             >
               Preset: Rim vs. Crater Floor (5 km)
             </button>
             <button
               type="button"
               onClick={applySeasonalContrastPreset}
-              className="rounded-lg border border-slate-700/80 bg-slate-950/70 px-2.5 py-1 text-[11px] font-medium text-slate-300 transition hover:border-sky-500/50 hover:text-sky-300"
+              className="rounded-lg border border-slate-700/80 bg-slate-950 px-2.5 py-1 text-xs font-medium text-slate-300 transition hover:border-slate-400 hover:text-white"
             >
               Preset: Summer vs. Winter
             </button>
@@ -358,12 +354,12 @@ export function CompareView({
         {/* Scenario Selectors */}
         <div className="mt-3 grid grid-cols-1 items-center gap-2.5 lg:grid-cols-[1fr_auto_1fr]">
           {/* Scenario A */}
-          <div className="rounded-lg border border-amber-500/35 bg-slate-950/70 p-3">
+          <div className="rounded-lg border border-slate-600 bg-slate-950 p-3">
             <div className="flex items-center justify-between gap-2">
-              <span className="rounded bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-300">
+              <span className="text-xs font-semibold text-slate-100">
                 Scenario A
               </span>
-              <span className="font-mono text-[11px] text-slate-400">
+              <span className="font-mono text-xs text-slate-400">
                 {formatLunarLatLon(
                   resolvedSiteA.coordinates.latitudeDeg,
                   resolvedSiteA.coordinates.longitudeDeg,
@@ -373,7 +369,7 @@ export function CompareView({
 
             <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
               <label className="block">
-                <span className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                <span className="mb-1 block text-[11px] font-medium text-slate-400">
                   Site
                 </span>
                 <select
@@ -385,7 +381,7 @@ export function CompareView({
                       setSharedSiteId(e.target.value);
                     }
                   }}
-                  className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-white focus:border-amber-500 focus:outline-none"
+                  className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-white focus:border-slate-300 focus:outline-none"
                 >
                   {sites.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -396,13 +392,13 @@ export function CompareView({
               </label>
 
               <label className="block">
-                <span className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                <span className="mb-1 block text-[11px] font-medium text-slate-400">
                   Seasonal Preset
                 </span>
                 <select
                   value={resolvedSeasonIdA}
                   onChange={(e) => handleSeasonChange('A', e.target.value)}
-                  className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-white focus:border-amber-500 focus:outline-none"
+                  className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-white focus:border-slate-300 focus:outline-none"
                 >
                   {seasons.map((season) => (
                     <option key={season.id} value={season.id}>
@@ -413,7 +409,7 @@ export function CompareView({
               </label>
             </div>
             <label className="mt-2 block">
-              <span className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-slate-400">
+              <span className="mb-1 block text-[11px] font-medium text-slate-400">
                 30-Day Window Start (UTC)
               </span>
               <DatePickerInput
@@ -424,7 +420,7 @@ export function CompareView({
                   onChangeHour(0);
                 }}
                 ariaLabel="Scenario A 30-day window start date in UTC"
-                className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white focus:border-amber-500 focus:outline-none"
+                className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white focus:border-slate-300 focus:outline-none"
               />
             </label>
           </div>
@@ -444,12 +440,12 @@ export function CompareView({
           </div>
 
           {/* Scenario B */}
-          <div className="rounded-lg border border-sky-500/35 bg-slate-950/70 p-3">
+          <div className="rounded-lg border border-violet-400/40 bg-slate-950 p-3">
             <div className="flex items-center justify-between gap-2">
-              <span className="rounded bg-sky-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-300">
+              <span className="text-xs font-semibold text-violet-300">
                 Scenario B
               </span>
-              <span className="font-mono text-[11px] text-slate-400">
+              <span className="font-mono text-xs text-slate-400">
                 {formatLunarLatLon(
                   resolvedSiteB.coordinates.latitudeDeg,
                   resolvedSiteB.coordinates.longitudeDeg,
@@ -459,7 +455,7 @@ export function CompareView({
 
             <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
               <label className="block">
-                <span className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                <span className="mb-1 block text-[11px] font-medium text-slate-400">
                   Site
                 </span>
                 <select
@@ -471,7 +467,7 @@ export function CompareView({
                       setSharedSiteId(e.target.value);
                     }
                   }}
-                  className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-white focus:border-sky-500 focus:outline-none"
+                  className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-white focus:border-slate-300 focus:outline-none"
                 >
                   {sites.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -482,13 +478,13 @@ export function CompareView({
               </label>
 
               <label className="block">
-                <span className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                <span className="mb-1 block text-[11px] font-medium text-slate-400">
                   Seasonal Preset
                 </span>
                 <select
                   value={resolvedSeasonIdB}
                   onChange={(e) => handleSeasonChange('B', e.target.value)}
-                  className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-white focus:border-sky-500 focus:outline-none"
+                  className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-white focus:border-slate-300 focus:outline-none"
                 >
                   {seasons.map((season) => (
                     <option key={season.id} value={season.id}>
@@ -499,7 +495,7 @@ export function CompareView({
               </label>
             </div>
             <label className="mt-2 block">
-              <span className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-slate-400">
+              <span className="mb-1 block text-[11px] font-medium text-slate-400">
                 30-Day Window Start (UTC)
               </span>
               <DatePickerInput
@@ -510,7 +506,7 @@ export function CompareView({
                   onChangeHour(0);
                 }}
                 ariaLabel="Scenario B 30-day window start date in UTC"
-                className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white focus:border-sky-500 focus:outline-none"
+                className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white focus:border-slate-300 focus:outline-none"
               />
             </label>
           </div>
@@ -518,13 +514,13 @@ export function CompareView({
       </div>
 
       {/* Synchronized Timeline & Zoom Bar */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
+      <div className="rounded-md border border-slate-800 bg-slate-900 p-3">
         <div className="flex flex-wrap items-center justify-between gap-2.5">
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={onTogglePlay}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500/20 px-3 py-1.5 text-xs font-semibold text-amber-300 ring-1 ring-amber-500/40 transition hover:bg-amber-500/30"
+              className="inline-flex items-center gap-1.5 rounded-md border border-slate-100 bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-950 transition hover:bg-white"
             >
               {isPlaying ? (
                 <>
@@ -543,7 +539,7 @@ export function CompareView({
               <button
                 type="button"
                 onClick={() => stepBy(-24)}
-                className="rounded-md border border-slate-800 bg-slate-950/70 p-1.5 text-slate-300 hover:border-slate-700 hover:text-white"
+                className="rounded-md border border-slate-800 bg-slate-950 p-1.5 text-slate-300 hover:border-slate-700 hover:text-white"
                 title="Back 24 hours"
                 aria-label="Back 24 hours"
               >
@@ -552,7 +548,7 @@ export function CompareView({
               <button
                 type="button"
                 onClick={() => stepBy(-1)}
-                className="rounded-md border border-slate-800 bg-slate-950/70 p-1.5 text-slate-300 hover:border-slate-700 hover:text-white"
+                className="rounded-md border border-slate-800 bg-slate-950 p-1.5 text-slate-300 hover:border-slate-700 hover:text-white"
                 title="Back 1 hour"
                 aria-label="Back 1 hour"
               >
@@ -561,7 +557,7 @@ export function CompareView({
               <button
                 type="button"
                 onClick={() => stepBy(1)}
-                className="rounded-md border border-slate-800 bg-slate-950/70 p-1.5 text-slate-300 hover:border-slate-700 hover:text-white"
+                className="rounded-md border border-slate-800 bg-slate-950 p-1.5 text-slate-300 hover:border-slate-700 hover:text-white"
                 title="Forward 1 hour"
                 aria-label="Forward 1 hour"
               >
@@ -570,7 +566,7 @@ export function CompareView({
               <button
                 type="button"
                 onClick={() => stepBy(24)}
-                className="rounded-md border border-slate-800 bg-slate-950/70 p-1.5 text-slate-300 hover:border-slate-700 hover:text-white"
+                className="rounded-md border border-slate-800 bg-slate-950 p-1.5 text-slate-300 hover:border-slate-700 hover:text-white"
                 title="Forward 24 hours"
                 aria-label="Forward 24 hours"
               >
@@ -579,7 +575,7 @@ export function CompareView({
               <button
                 type="button"
                 onClick={() => onChangeHour(0)}
-                className="rounded-md border border-slate-800 bg-slate-950/70 p-1.5 text-slate-400 hover:border-slate-700 hover:text-white"
+                className="rounded-md border border-slate-800 bg-slate-950 p-1.5 text-slate-400 hover:border-slate-700 hover:text-white"
                 title="Reset to Hour 0"
                 aria-label="Reset to Hour 0"
               >
@@ -587,15 +583,15 @@ export function CompareView({
               </button>
             </div>
 
-            <div className="flex items-center rounded-lg border border-slate-800 bg-slate-950/70 p-0.5 text-[11px]">
+            <div className="flex items-center rounded-lg border border-slate-800 bg-slate-950 p-0.5 text-xs">
               {([1, 2, 4] as PlaybackSpeed[]).map((spd) => (
                 <button
                   key={spd}
                   type="button"
                   onClick={() => onChangeSpeed(spd)}
-                  className={`rounded px-2 py-0.5 font-mono font-medium transition ${
+                  className={`rounded font-mono font-medium transition ${
                     playbackSpeed === spd
-                      ? 'bg-slate-800 text-amber-300'
+                      ? 'bg-slate-700 text-white'
                       : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
@@ -606,7 +602,7 @@ export function CompareView({
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className="font-mono text-[11px] text-slate-300">
+            <span className="font-mono text-xs text-slate-300">
               Sync Step: <strong className="text-white">Day {dayNumber}/{totalDays}</strong> ·{' '}
               Hour {safeHourIndex + 1}/{maxHours}
             </span>
@@ -614,7 +610,7 @@ export function CompareView({
             <button
               type="button"
               onClick={() => setZoomMode((z) => (z === 'wide' ? 'horizon' : 'wide'))}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700/80 bg-slate-950/70 px-2.5 py-1 text-[11px] font-medium text-slate-300 transition hover:border-amber-500/50 hover:text-amber-300"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700/80 bg-slate-950 px-2.5 py-1 text-xs font-medium text-slate-300 transition hover:border-slate-400 hover:text-white"
             >
               {zoomMode === 'wide' ? (
                 <>
@@ -639,10 +635,10 @@ export function CompareView({
             value={safeHourIndex}
             onChange={(e) => onChangeHour(Number(e.target.value))}
             aria-label="Synchronized mission timeline scrubber"
-            className="h-1.5 w-full cursor-pointer accent-amber-400"
+            className="h-1.5 w-full cursor-pointer accent-slate-200"
           />
         </div>
-        <p className="mt-1 text-[10px] text-slate-500" aria-live="polite">
+        <p className="mt-1 text-[11px] text-slate-500" aria-live="polite">
           Scenario A: {resultA.source} · Scenario B: {resultB.source}
         </p>
       </div>
@@ -651,27 +647,27 @@ export function CompareView({
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
         {/* Scenario A Sky-Plot */}
         <div className="flex flex-col gap-2">
-          <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-500/30 bg-slate-900/70 px-3.5 py-2.5">
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-600 bg-slate-900 px-3.5 py-2.5">
             <div>
               <div className="flex items-center gap-2">
-                <span className="rounded bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-bold uppercase text-amber-300">
+                <span className="text-xs font-semibold text-slate-100">
                   A
                 </span>
                 <span className="text-xs font-bold text-white">{resolvedSiteA.name}</span>
-                <span className="text-[11px] text-slate-400">· {windowLabelA}</span>
+                <span className="text-xs text-slate-400">· {windowLabelA}</span>
               </div>
-              <div className="mt-0.5 font-mono text-[10px] text-slate-400">
+              <div className="mt-0.5 font-mono text-[11px] text-slate-400">
                 {timeA.dateLabel} · {timeA.timeLabel} · Elev{' '}
                 {resolvedSiteA.coordinates.elevationM >= 0 ? '+' : ''}
                 {resolvedSiteA.coordinates.elevationM.toFixed(0)} m
               </div>
             </div>
             {currentA && (
-              <div className="flex items-center gap-2 font-mono text-[10px]">
+              <div className="flex items-center gap-2 font-mono text-[11px]">
                 <span
-                  className={`inline-flex items-center gap-1 rounded px-2 py-0.5 font-semibold ${
+                  className={`inline-flex items-center gap-1 rounded font-semibold ${
                     currentA.sunVisible
-                      ? 'bg-amber-500/15 text-amber-300'
+                      ? 'text-amber-300'
                       : 'bg-slate-800 text-slate-400'
                   }`}
                 >
@@ -679,10 +675,10 @@ export function CompareView({
                   {currentA.sunVisible ? 'Sunlit' : 'Shadow'}
                 </span>
                 <span
-                  className={`inline-flex items-center gap-1 rounded px-2 py-0.5 font-semibold ${
+                  className={`inline-flex items-center gap-1 rounded font-semibold ${
                     currentA.earthVisible
-                      ? 'bg-sky-500/15 text-sky-300'
-                      : 'bg-rose-500/15 text-rose-300'
+                      ? 'text-sky-300'
+                      : 'text-rose-300'
                   }`}
                 >
                   <Radio className="h-3 w-3" />
@@ -705,27 +701,27 @@ export function CompareView({
 
         {/* Scenario B Sky-Plot */}
         <div className="flex flex-col gap-2">
-          <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-sky-500/30 bg-slate-900/70 px-3.5 py-2.5">
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-violet-400/40 bg-slate-900 px-3.5 py-2.5">
             <div>
               <div className="flex items-center gap-2">
-                <span className="rounded bg-sky-500/15 px-1.5 py-0.5 text-[10px] font-bold uppercase text-sky-300">
+                <span className="text-xs font-semibold text-violet-300">
                   B
                 </span>
                 <span className="text-xs font-bold text-white">{resolvedSiteB.name}</span>
-                <span className="text-[11px] text-slate-400">· {windowLabelB}</span>
+                <span className="text-xs text-slate-400">· {windowLabelB}</span>
               </div>
-              <div className="mt-0.5 font-mono text-[10px] text-slate-400">
+              <div className="mt-0.5 font-mono text-[11px] text-slate-400">
                 {timeB.dateLabel} · {timeB.timeLabel} · Elev{' '}
                 {resolvedSiteB.coordinates.elevationM >= 0 ? '+' : ''}
                 {resolvedSiteB.coordinates.elevationM.toFixed(0)} m
               </div>
             </div>
             {currentB && (
-              <div className="flex items-center gap-2 font-mono text-[10px]">
+              <div className="flex items-center gap-2 font-mono text-[11px]">
                 <span
-                  className={`inline-flex items-center gap-1 rounded px-2 py-0.5 font-semibold ${
+                  className={`inline-flex items-center gap-1 rounded font-semibold ${
                     currentB.sunVisible
-                      ? 'bg-amber-500/15 text-amber-300'
+                      ? 'text-amber-300'
                       : 'bg-slate-800 text-slate-400'
                   }`}
                 >
@@ -733,10 +729,10 @@ export function CompareView({
                   {currentB.sunVisible ? 'Sunlit' : 'Shadow'}
                 </span>
                 <span
-                  className={`inline-flex items-center gap-1 rounded px-2 py-0.5 font-semibold ${
+                  className={`inline-flex items-center gap-1 rounded font-semibold ${
                     currentB.earthVisible
-                      ? 'bg-sky-500/15 text-sky-300'
-                      : 'bg-rose-500/15 text-rose-300'
+                      ? 'text-sky-300'
+                      : 'text-rose-300'
                   }`}
                 >
                   <Radio className="h-3 w-3" />
@@ -759,20 +755,20 @@ export function CompareView({
       </div>
 
       {/* Delta Comparison Table */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
+      <div className="rounded-md border border-slate-800 bg-slate-900 p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
+            <h3 className="text-sm font-semibold text-slate-100">
               30-Day Scenario Comparison Table
             </h3>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-xs text-slate-400">
               Compares solar illumination, terrain shadowing, and geometric Earth line of sight.
             </p>
           </div>
           {resolvedSiteA.id !== resolvedSiteB.id &&
             resolvedSiteB.comparisonTargetId === resolvedSiteA.id &&
             resolvedSiteB.comparisonDistanceKm != null && (
-              <span className="rounded-md border border-sky-500/30 bg-sky-500/10 px-2.5 py-1 font-mono text-[11px] text-sky-300">
+              <span className="font-mono text-sm text-slate-200">
                 Separation: {resolvedSiteB.comparisonDistanceKm.toFixed(2)} km
               </span>
             )}
@@ -781,15 +777,15 @@ export function CompareView({
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-800 text-[11px] uppercase tracking-wider text-slate-400">
+              <tr className="border-b border-slate-800 text-xs text-slate-400">
                 <th className="py-2.5 pr-4 font-semibold">Metric</th>
-                <th className="py-2.5 px-3 font-semibold text-amber-300">
+                <th className="py-2.5 px-3 font-semibold text-slate-100">
                   Scenario A · {resolvedSiteA.name}
                   <span className="block font-normal normal-case text-slate-400">
                     {windowLabelA}
                   </span>
                 </th>
-                <th className="py-2.5 px-3 font-semibold text-sky-300">
+                <th className="py-2.5 px-3 font-semibold text-violet-300">
                   Scenario B · {resolvedSiteB.name}
                   <span className="block font-normal normal-case text-slate-400">
                     {windowLabelB}
@@ -808,19 +804,19 @@ export function CompareView({
                     <Sun className="h-4 w-4 text-amber-400" />
                     <span>Total Sunlit Hours</span>
                   </div>
-                  <div className="mt-0.5 text-[11px] text-slate-400">
+                  <div className="mt-0.5 text-xs text-slate-400">
                     Sunlit fraction (% of {maxHours}h)
                   </div>
                 </td>
                 <td className="py-3 px-3 text-slate-100">
                   <div className="text-sm font-bold">{dataA.kpis.sunVisibleHours} h</div>
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-xs text-slate-400">
                     {dataA.kpis.sunlightAvailabilityPct.toFixed(1)}%
                   </div>
                 </td>
                 <td className="py-3 px-3 text-slate-100">
                   <div className="text-sm font-bold">{dataB.kpis.sunVisibleHours} h</div>
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-xs text-slate-400">
                     {dataB.kpis.sunlightAvailabilityPct.toFixed(1)}%
                   </div>
                 </td>
@@ -829,7 +825,7 @@ export function CompareView({
                     <span className="text-sm font-bold text-white">
                       {formatDeltaNumber(deltaSunlitHours, ' h', 0)}
                     </span>
-                    <span className="text-[11px] text-slate-400">
+                    <span className="text-xs text-slate-400">
                       ({formatDeltaNumber(deltaSolarPct, '%', 1)})
                     </span>
                     {renderFavorBadge(deltaSunlitHours, true)}
@@ -844,20 +840,20 @@ export function CompareView({
                     <Moon className="h-4 w-4 text-indigo-400" />
                     <span>Max Shadow Duration</span>
                   </div>
-                  <div className="mt-0.5 text-[11px] text-slate-400">
+                  <div className="mt-0.5 text-xs text-slate-400">
                     Longest continuous darkness (lower is better)
                   </div>
                 </td>
                 <td className="py-3 px-3 text-slate-100">
                   <div className="text-sm font-bold">{shadowA.maxShadowHours} h</div>
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-xs text-slate-400">
                     {shadowA.shadowWindowCount} shadow{' '}
                     {shadowA.shadowWindowCount === 1 ? 'period' : 'periods'}
                   </div>
                 </td>
                 <td className="py-3 px-3 text-slate-100">
                   <div className="text-sm font-bold">{shadowB.maxShadowHours} h</div>
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-xs text-slate-400">
                     {shadowB.shadowWindowCount} shadow{' '}
                     {shadowB.shadowWindowCount === 1 ? 'period' : 'periods'}
                   </div>
@@ -877,9 +873,9 @@ export function CompareView({
                 <td className="py-3 pr-4 font-sans">
                   <div className="flex items-center gap-2 font-semibold text-white">
                     <Radio className="h-4 w-4 text-sky-400" />
-                    <span>Earth Line of Sight</span>
+                    <span>Earth line of sight</span>
                   </div>
-                  <div className="mt-0.5 text-[11px] text-slate-400">
+                  <div className="mt-0.5 text-xs text-slate-400">
                     Geometric visibility above local terrain; no link budget or network availability
                   </div>
                 </td>
@@ -887,7 +883,7 @@ export function CompareView({
                   <div className="text-sm font-bold">
                     {dataA.kpis.earthLineOfSightPct.toFixed(1)}%
                   </div>
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-xs text-slate-400">
                     {dataA.kpis.earthVisibleHours} h · {earthVisibilityA.windowCount} windows
                   </div>
                 </td>
@@ -895,7 +891,7 @@ export function CompareView({
                   <div className="text-sm font-bold">
                     {dataB.kpis.earthLineOfSightPct.toFixed(1)}%
                   </div>
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-xs text-slate-400">
                     {dataB.kpis.earthVisibleHours} h · {earthVisibilityB.windowCount} windows
                   </div>
                 </td>
@@ -904,7 +900,7 @@ export function CompareView({
                     <span className="text-sm font-bold text-white">
                       {formatDeltaNumber(deltaEarthLosPct, '%', 1)}
                     </span>
-                    <span className="text-[11px] text-slate-400">
+                    <span className="text-xs text-slate-400">
                       ({formatDeltaNumber(deltaEarthLosHours, ' h', 0)})
                     </span>
                     {renderFavorBadge(deltaEarthLosPct, true)}

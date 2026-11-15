@@ -26,45 +26,30 @@ function CountdownCard({ body, countdown }: { body: CountdownBody; countdown: Co
     countdown.visibleNow && countdown.hoursToChange !== null && countdown.hoursToChange < URGENT_HOURS;
   const when = countdown.changeAt ? formatUtcTimestamp(countdown.changeAt) : null;
 
+  const valueColor = urgent ? 'text-rose-300' : body === 'sun' ? 'text-amber-300' : 'text-sky-300';
+
   return (
-    <div
-      className={`min-w-0 rounded-xl border p-3 ${
-        urgent ? 'border-rose-500/50 bg-rose-950/30' : 'border-slate-800 bg-slate-900/70'
-      }`}
-    >
-      <div className="flex flex-wrap items-center justify-between gap-x-1.5 gap-y-1">
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+    <div className="min-w-0">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-2">
+        <span className="inline-flex items-center gap-1.5 text-sm text-slate-200">
           <Icon className={`h-3.5 w-3.5 ${accent}`} />
-          {copy.title}
+          {eventWord} in
         </span>
-        <span
-          className={`whitespace-nowrap rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${
-            countdown.visibleNow
-              ? body === 'sun'
-                ? 'bg-amber-500/15 text-amber-300'
-                : 'bg-sky-500/15 text-sky-300'
-              : 'bg-slate-800 text-slate-400'
-          }`}
-        >
-          {countdown.visibleNow ? copy.up : copy.down}
-        </span>
+        <span className="text-xs text-slate-400">{countdown.visibleNow ? copy.up : copy.down}</span>
       </div>
 
       {countdown.hoursToChange !== null ? (
         <>
-          <div className="mt-2 text-[11px] font-medium uppercase tracking-wide text-slate-400">
-            {eventWord} in
-          </div>
-          <div className="font-mono text-2xl font-bold tracking-tight text-white">
+          <div className={`mt-1 font-mono text-4xl font-semibold leading-none ${valueColor}`}>
             {formatDuration(countdown.hoursToChange)}
           </div>
           {when && (
-            <div className="mt-1 font-mono text-[11px] text-slate-400">
-              {when.dateLabel} · {when.timeLabel}
+            <div className="mt-1.5 font-mono text-xs text-slate-400">
+              {when.dateLabel}, {when.timeLabel}
             </div>
           )}
           {urgent && (
-            <div className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold text-rose-300">
+            <div className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-rose-300">
               <AlertTriangle className="h-3 w-3" />
               Under {URGENT_HOURS} h of {body === 'sun' ? 'sunlight' : 'Earth contact'} left
             </div>
@@ -72,10 +57,10 @@ function CountdownCard({ body, countdown }: { body: CountdownBody; countdown: Co
         </>
       ) : (
         <>
-          <div className="mt-2 font-mono text-lg font-bold tracking-tight text-white">
+          <div className="mt-1 font-mono text-2xl font-semibold leading-none text-slate-200">
             No {eventWord.toLowerCase()}
           </div>
-          <div className="mt-1 text-[11px] leading-snug text-slate-400">
+          <div className="mt-1.5 text-xs leading-snug text-slate-400">
             {countdown.visibleNow
               ? `Stays above the horizon for the rest of this window (at least ${formatDuration(countdown.hoursLeftInWindow)}).`
               : `Stays below the horizon for the rest of this window (at least ${formatDuration(countdown.hoursLeftInWindow)}).`}
@@ -93,9 +78,12 @@ export function CountdownCards({ hourly, hourIndex }: CountdownCardsProps) {
   if (!sun || !earth) return null;
 
   return (
-    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2" aria-label="Time until sunset and Earthset">
+    <section
+      className="grid grid-cols-1 gap-4 border-t border-slate-700 pt-3 sm:grid-cols-2 sm:gap-0 sm:[&>*+*]:border-l sm:[&>*+*]:border-slate-700 sm:[&>*+*]:pl-5 sm:[&>*:first-child]:pr-5"
+      aria-label="Time until sunset and Earthset"
+    >
       <CountdownCard body="sun" countdown={sun} />
       <CountdownCard body="earth" countdown={earth} />
-    </div>
+    </section>
   );
 }

@@ -1,5 +1,111 @@
+@import "@fontsource/barlow/400.css";
+@import "@fontsource/barlow/500.css";
+@import "@fontsource/barlow/600.css";
+@import "@fontsource/barlow-condensed/500.css";
+@import "@fontsource/barlow-condensed/600.css";
+@import "@fontsource/barlow-condensed/700.css";
 @import "tailwindcss";
 @import "ol/ol.css";
+
+/*
+ * Design idea: the interface is grey like the Moon. Colour is reserved for the
+ * two things this tool is about: the Sun (gold) and the Earth (blue).
+ * Everything else (panels, borders, selection, buttons) stays in warm graphite
+ * and bone. The existing `slate`, `amber` and `sky` class names are remapped
+ * here, so components keep their class names but pick up the new palette.
+ */
+@theme {
+  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  /* `font-mono` is used for numeric readouts; a condensed face with tabular figures reads like an instrument. */
+  --font-mono: "Barlow Condensed", "Barlow", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-xs: 1px;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 3px;
+  --radius-xl: 4px;
+  --radius-2xl: 6px;
+
+  --color-white: #f5f2ea;
+
+  /* Graphite and bone */
+  --color-slate-50: #f5f2ea;
+  --color-slate-100: #ece8de;
+  --color-slate-200: #ddd8cb;
+  --color-slate-300: #c3beb0;
+  --color-slate-400: #a39e92;
+  --color-slate-500: #7d796e;
+  --color-slate-600: #5a574f;
+  --color-slate-700: #403e38;
+  --color-slate-800: #2f2e2a;
+  --color-slate-900: #232220;
+  --color-slate-950: #1a1917;
+
+  /* Sun */
+  --color-amber-100: #fbeac4;
+  --color-amber-200: #f8dc9b;
+  --color-amber-300: #f4c95d;
+  --color-amber-400: #efb93a;
+  --color-amber-500: #e5a820;
+  --color-amber-600: #c98a12;
+  --color-amber-700: #9a6a0f;
+  --color-amber-950: #3a2a08;
+
+  /* Earth */
+  --color-sky-200: #c4def2;
+  --color-sky-300: #98c5e8;
+  --color-sky-400: #6aa9dc;
+  --color-sky-500: #4a8ec9;
+  --color-sky-600: #3470a6;
+  --color-sky-950: #0e2236;
+
+  /* Ratings: sage and brick, kept apart from the Sun gold */
+  --color-emerald-300: #b0d6b4;
+  --color-emerald-400: #8fc296;
+  --color-emerald-500: #6aa774;
+  --color-emerald-950: #12261a;
+  --color-rose-200: #f0c6bf;
+  --color-rose-300: #e9a398;
+  --color-rose-400: #dc7e71;
+  --color-rose-500: #c45f50;
+  --color-rose-950: #3a1512;
+}
+
+html {
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  letter-spacing: 0.005em;
+}
+
+.font-mono {
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  letter-spacing: 0.01em;
+}
+
+:focus-visible {
+  outline: 2px solid #ece8de;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #403e38 transparent;
+}
+
 
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
@@ -8,50 +114,49 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Custom OpenLayers control styling for dark lunar theme */
 .ol-control {
-  background-color: rgba(15, 23, 42, 0.78) !important;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 0.5rem !important;
-  padding: 2px !important;
+  background-color: #232220 !important;
+  border: 1px solid #403e38;
+  border-radius: 3px !important;
+  padding: 0 !important;
 }
 
 .ol-control button {
   background-color: transparent !important;
-  color: #e2e8f0 !important;
-  border-radius: 0.375rem !important;
+  color: #ddd8cb !important;
+  border-radius: 2px !important;
   font-weight: 600 !important;
   transition: background-color 150ms ease, color 150ms ease;
 }
 
 .ol-control button:hover,
 .ol-control button:focus {
-  background-color: rgba(245, 158, 11, 0.2) !important;
-  color: #fbbf24 !important;
+  background-color: #403e38 !important;
+  color: #f5f2ea !important;
   outline: none !important;
 }
 
 .ol-scale-line {
-  background: rgba(15, 23, 42, 0.8) !important;
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  border-radius: 0.375rem !important;
+  background: #232220 !important;
+  border: 1px solid #403e38;
+  border-radius: 2px !important;
   padding: 3px 6px !important;
   bottom: 12px !important;
   left: 12px !important;
 }
 
 .ol-scale-line-inner {
-  border-color: #94a3b8 !important;
-  color: #cbd5e1 !important;
+  border-color: #a39e92 !important;
+  color: #c3beb0 !important;
   font-size: 11px !important;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-family: var(--font-mono) !important;
 }
 
 .ol-attribution {
-  background: rgba(15, 23, 42, 0.72) !important;
-  color: #94a3b8 !important;
+  background: #232220 !important;
+  color: #a39e92 !important;
   font-size: 10px !important;
 }
 
 .ol-attribution a {
-  color: #cbd5e1 !important;
+  color: #c3beb0 !important;
 }

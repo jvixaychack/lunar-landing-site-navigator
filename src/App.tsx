@@ -4,8 +4,6 @@ import {
   BookOpen,
   Compass,
   GitCompareArrows,
-  Globe2,
-  MapPin,
   Mountain,
   Radio,
   Sun,
@@ -122,83 +120,66 @@ export function App() {
   return (
     <div className="flex min-h-screen w-screen flex-col bg-slate-950 text-slate-100 lg:h-screen lg:overflow-hidden">
       {/* Header */}
-      <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 bg-slate-900/70 px-4 py-2.5 backdrop-blur-md">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/15 text-amber-400 ring-1 ring-amber-500/30">
-            <Globe2 className="h-4 w-4" />
-          </div>
+      <header className="flex shrink-0 flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-slate-800 bg-slate-950 px-5 pt-3">
+        <div className="flex items-center gap-3 pb-3">
+          {/* Terminator mark: a Moon half in sunlight, half in shadow */}
+          <svg viewBox="0 0 24 24" className="h-7 w-7 shrink-0" role="img" aria-label="Lunar Navigator">
+            <circle cx="12" cy="12" r="10.5" fill="none" stroke="#ddd8cb" strokeWidth="1.25" />
+            <path d="M12 1.5a10.5 10.5 0 0 1 0 21z" fill="#f4c95d" />
+          </svg>
           <div>
-            <h1 className="text-sm font-semibold tracking-tight text-white">
+            <h1 className="font-mono text-2xl font-semibold leading-none text-slate-50">
               Lunar South Pole Navigator
             </h1>
-            <p className="text-[11px] text-slate-400">
-              South Pole Stereographic (IAU2000:30120) · ASU/NASA Lunaserv WMS &amp; LOLA DEM
+            <p className="mt-1 text-xs text-slate-400">
+              LOLA terrain and ASU/NASA Lunaserv imagery, South Pole stereographic (IAU2000:30120)
             </p>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          {/* Planner vs. Explorer (Educator) vs. Compare Mode Toggle */}
-          <div
-            className="flex items-center rounded-lg border border-slate-800 bg-slate-950/80 p-0.5"
-            role="group"
-            aria-label="Dashboard mode"
-          >
-            <button
-              type="button"
-              onClick={() => setViewMode('planner')}
-              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition ${
-                viewMode === 'planner'
-                  ? 'bg-amber-500/20 text-amber-300 ring-1 ring-amber-500/40'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <Compass className="h-3.5 w-3.5" />
-              <span>Planner</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('explorer')}
-              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition ${
-                viewMode === 'explorer'
-                  ? 'bg-sky-500/20 text-sky-300 ring-1 ring-sky-500/40'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <BookOpen className="h-3.5 w-3.5" />
-              <span>Explorer (Educator)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('compare')}
-              className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition ${
-                viewMode === 'compare'
-                  ? 'bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/40'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <GitCompareArrows className="h-3.5 w-3.5" />
-              <span>Compare Sites &amp; Launch Windows</span>
-            </button>
-          </div>
+        <nav className="flex flex-wrap items-end gap-x-5" aria-label="Dashboard mode">
+          {(
+            [
+              ['planner', 'Planner', Compass],
+              ['explorer', 'Explorer', BookOpen],
+              ['compare', 'Compare sites', GitCompareArrows],
+            ] as const
+          ).map(([mode, label, Icon]) => {
+            const active = viewMode === mode;
+            return (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setViewMode(mode)}
+                aria-current={active ? 'page' : undefined}
+                className={`inline-flex items-center gap-1.5 border-b-2 pb-3 text-sm font-medium transition-colors ${
+                  active
+                    ? 'border-slate-100 text-white'
+                    : 'border-transparent text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span>{label}</span>
+              </button>
+            );
+          })}
+        </nav>
 
+        <div className="flex items-center gap-4 pb-3 text-sm">
           <button
             type="button"
             onClick={() => setIsCitationsOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700/80 bg-slate-950/80 px-2.5 py-1 text-xs font-medium text-slate-300 transition hover:border-amber-500/50 hover:text-amber-300"
+            className="inline-flex items-center gap-1.5 text-slate-300 underline decoration-slate-600 underline-offset-4 transition-colors hover:text-white hover:decoration-slate-300"
           >
-            <BookMarked className="h-3.5 w-3.5 text-amber-400" />
-            <span>Data &amp; NASA Citations</span>
+            <BookMarked className="h-3.5 w-3.5" />
+            <span>Data and citations</span>
           </button>
-
-          <span className="hidden rounded-md border border-slate-800 bg-slate-950/70 px-2.5 py-1 font-mono text-[11px] text-slate-300 sm:inline-block">
-            {sites.length} Sites Loaded
-          </span>
+          <span className="hidden font-mono text-slate-400 sm:inline-block">{sites.length} sites</span>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex min-h-0 flex-1 flex-col gap-3 p-3 lg:flex-row">
+      <main className="flex min-h-0 flex-1 flex-col gap-4 p-4 lg:flex-row">
         {viewMode === 'compare' ? (
           <section className="min-h-0 flex-1">
             {error ? (
@@ -222,14 +203,13 @@ export function App() {
         ) : (
           <>
             {/* Sidebar: Study & Comparison Sites */}
-            <aside className="flex w-full shrink-0 flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60 lg:w-64 xl:w-72">
-          <div className="border-b border-slate-800 px-3.5 py-2.5">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-300">
-              Artemis IV South Pole Study Sites
-            </h2>
+            <aside className="flex w-full shrink-0 flex-col overflow-hidden rounded-md border border-slate-800 bg-slate-900 lg:w-64 xl:w-72">
+          <div className="border-b border-slate-800 px-4 py-3">
+            <h2 className="text-sm font-semibold text-slate-100">Artemis IV study sites</h2>
           </div>
 
-          <div className="flex-1 space-y-1.5 overflow-y-auto p-2.5">
+          <div className="flex-1 overflow-y-auto">
+            <div className="border-b border-slate-800 p-3">
             <CustomSiteForm
               onAdd={handleAddCustomSite}
               customSiteCount={customSites.length}
@@ -238,6 +218,7 @@ export function App() {
               onTogglePickMode={handleTogglePickMode}
               pickRequest={pickRequest}
             />
+            </div>
 
             {error && (
               <div className="rounded-lg border border-rose-500/40 bg-rose-950/50 p-3 text-xs text-rose-200">
@@ -249,6 +230,7 @@ export function App() {
               <div className="p-3 text-xs text-slate-400">Loading sites…</div>
             )}
 
+            <ul className="divide-y divide-slate-800">
             {sites.map((site) => {
               const isSelected = selectedSite?.id === site.id;
               const isComparison = site.role === 'comparison';
@@ -257,46 +239,34 @@ export function App() {
                 (site.seasons ? Object.values(site.seasons)[0] : undefined);
 
               return (
+                <li key={site.id}>
                 <button
-                  key={site.id}
                   type="button"
                   onClick={() => setSelectedSite(site)}
-                  className={`w-full rounded-lg border p-2.5 text-left transition ${
+                  aria-current={isSelected ? 'true' : undefined}
+                  className={`w-full border-l-2 px-4 py-3 text-left transition-colors ${
                     isSelected
-                      ? 'border-amber-500/60 bg-amber-500/10 shadow-sm'
-                      : 'border-slate-800/80 bg-slate-950/50 hover:border-slate-700 hover:bg-slate-900'
+                      ? 'border-slate-100 bg-slate-800'
+                      : 'border-transparent hover:bg-slate-800/50'
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-1.5">
-                      <MapPin
-                        className={`h-3.5 w-3.5 shrink-0 ${
-                          isComparison ? 'text-sky-400' : 'text-amber-400'
-                        }`}
-                      />
-                      <span className="text-xs font-semibold text-white">
-                        {site.name}
-                      </span>
-                    </div>
-                    <span
-                      className={`rounded px-1.5 py-0.5 text-[10px] font-medium uppercase ${
-                        isComparison
-                          ? 'bg-sky-500/15 text-sky-300'
-                          : 'bg-amber-500/15 text-amber-300'
-                      }`}
-                    >
-                      {site.role}
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-mono text-lg font-semibold leading-tight text-slate-50">
+                      {site.name}
+                    </span>
+                    <span className={`text-xs ${isComparison ? 'text-sky-300' : 'text-slate-400'}`}>
+                      {isComparison ? 'Comparison' : site.role === 'custom' ? 'Custom' : 'Study'}
                     </span>
                   </div>
 
-                  <div className="mt-1.5 flex items-center justify-between font-mono text-[11px] text-slate-400">
+                  <div className="mt-0.5 flex items-center justify-between font-mono text-sm text-slate-400">
                     <span>
                       {formatLunarLatLon(
                         site.coordinates.latitudeDeg,
                         site.coordinates.longitudeDeg,
                       )}
                     </span>
-                    <span className="flex items-center gap-1 text-slate-300">
+                    <span className="inline-flex items-center gap-1">
                       <Mountain className="h-3 w-3 text-slate-500" />
                       {site.coordinates.elevationM >= 0 ? '+' : ''}
                       {site.coordinates.elevationM.toFixed(0)} m
@@ -304,20 +274,22 @@ export function App() {
                   </div>
 
                   {siteSeason && (
-                    <div className="mt-1.5 flex items-center gap-3 border-t border-slate-800/70 pt-1.5 font-mono text-[10px] text-slate-400">
-                      <span className="inline-flex items-center gap-1 text-amber-300/90">
+                    <div className="mt-1.5 flex items-center gap-4 font-mono text-sm">
+                      <span className="inline-flex items-center gap-1.5 text-amber-300">
                         <Sun className="h-3 w-3" />
-                        {siteSeason.kpis.sunlightAvailabilityPct.toFixed(0)}%
+                        {siteSeason.kpis.sunlightAvailabilityPct.toFixed(0)}% sunlit
                       </span>
-                      <span className="inline-flex items-center gap-1 text-sky-300/90">
+                      <span className="inline-flex items-center gap-1.5 text-sky-300">
                         <Radio className="h-3 w-3" />
-                        {siteSeason.kpis.earthLineOfSightPct.toFixed(0)}% Earth LOS
+                        {siteSeason.kpis.earthLineOfSightPct.toFixed(0)}% Earth
                       </span>
                     </div>
                   )}
                 </button>
+                </li>
               );
             })}
+            </ul>
           </div>
         </aside>
 

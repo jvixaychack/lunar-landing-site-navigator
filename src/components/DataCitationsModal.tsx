@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BookMarked, Compass, ExternalLink, Layers, Orbit, X } from 'lucide-react';
+import { Compass, ExternalLink, Layers, Orbit, X } from 'lucide-react';
 import type { SitesMetadata } from '../types/lunar';
 
 interface DataCitationsModalProps {
@@ -28,7 +28,7 @@ export function DataCitationsModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-labelledby="citations-modal-title"
@@ -41,17 +41,14 @@ export function DataCitationsModal({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/15 text-amber-400 ring-1 ring-amber-500/30">
-              <BookMarked className="h-4 w-4" />
-            </div>
             <div>
               <h2
                 id="citations-modal-title"
-                className="text-sm font-bold tracking-tight text-white"
+                className="font-mono text-2xl font-semibold text-slate-50"
               >
-                Data Sources &amp; NASA Citations
+                Data sources and citations
               </h2>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-xs text-slate-400">
                 Authoritative lunar topography, imagery, and ephemeris datasets
               </p>
             </div>
@@ -70,10 +67,10 @@ export function DataCitationsModal({
         {/* Body */}
         <div className="space-y-3.5 overflow-y-auto p-5 text-xs leading-relaxed text-slate-300">
           {/* Artemis IV mission context */}
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/[0.06] p-4">
+          <div className="rounded-md border border-slate-700 bg-slate-950 p-4">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-amber-300">
+                <h3 className="text-sm font-semibold text-slate-50">
                   Artemis IV Mission Context
                 </h3>
                 <p className="mt-2 text-slate-300">
@@ -86,7 +83,7 @@ export function DataCitationsModal({
                 href="https://www.nasa.gov/mission/artemis-iv/"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex shrink-0 items-center gap-1 rounded bg-slate-800 px-2 py-0.5 font-mono text-[10px] text-amber-300 transition hover:bg-slate-700"
+                className="inline-flex shrink-0 items-center gap-1 rounded bg-slate-800 font-mono text-xs text-slate-300 underline underline-offset-4 transition hover:bg-slate-700"
               >
                 <span>NASA mission</span>
                 <ExternalLink className="h-2.5 w-2.5" />
@@ -95,15 +92,15 @@ export function DataCitationsModal({
           </div>
 
           {/* 1. NASA LRO LOLA */}
-          <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+          <div className="rounded-md border border-slate-800 bg-slate-950/60 p-4">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
-                <Compass className="h-4 w-4 shrink-0 text-amber-400" />
-                <h3 className="text-xs font-bold uppercase tracking-wider text-amber-300">
+                <Compass className="h-4 w-4 shrink-0 text-slate-400" />
+                <h3 className="text-sm font-semibold text-slate-50">
                   NASA LRO LOLA Topography
                 </h3>
               </div>
-              <span className="rounded bg-slate-800 px-2 py-0.5 font-mono text-[10px] text-slate-300">
+              <span className="rounded bg-slate-800 font-mono text-[11px] text-slate-300">
                 LDEM_80S_80M.IMG
               </span>
             </div>
@@ -126,17 +123,17 @@ export function DataCitationsModal({
               </span>{' '}
               azimuthal resolution.
             </p>
-            <p className="mt-2 font-mono text-[11px] text-slate-400">
+            <p className="mt-2 font-mono text-xs text-slate-400">
               Credit: NASA Goddard Space Flight Center / LRO LOLA Science Team (PDS Geosciences Node).
             </p>
           </div>
 
           {/* 2. ASU / LROC Lunaserv WMS */}
-          <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+          <div className="rounded-md border border-slate-800 bg-slate-950/60 p-4">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
-                <Layers className="h-4 w-4 shrink-0 text-sky-400" />
-                <h3 className="text-xs font-bold uppercase tracking-wider text-sky-300">
+                <Layers className="h-4 w-4 shrink-0 text-slate-400" />
+                <h3 className="text-sm font-semibold text-slate-50">
                   ASU / LROC Lunaserv WMS
                 </h3>
               </div>
@@ -144,7 +141,7 @@ export function DataCitationsModal({
                 href="https://lunaserv.lroc.asu.edu/"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1 rounded bg-slate-800 px-2 py-0.5 font-mono text-[10px] text-sky-300 transition hover:bg-slate-700"
+                className="inline-flex items-center gap-1 rounded bg-slate-800 font-mono text-xs text-slate-300 underline underline-offset-4 transition hover:bg-slate-700"
               >
                 <span>lunaserv.lroc.asu.edu</span>
                 <ExternalLink className="h-2.5 w-2.5" />
@@ -159,17 +156,17 @@ export function DataCitationsModal({
               <span className="font-mono text-slate-200">IAU2000:30120</span>), providing both LROC
               Wide Angle Camera (WAC) imagery and LOLA shaded-relief elevation layers.
             </p>
-            <p className="mt-2 font-mono text-[11px] text-slate-400">
+            <p className="mt-2 font-mono text-xs text-slate-400">
               Credit: ASU School of Earth and Space Exploration / LROC Operations Center &amp; NASA.
             </p>
           </div>
 
           {/* 3. NASA JPL Horizons */}
-          <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+          <div className="rounded-md border border-slate-800 bg-slate-950/60 p-4">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2">
-                <Orbit className="h-4 w-4 shrink-0 text-emerald-400" />
-                <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-300">
+                <Orbit className="h-4 w-4 shrink-0 text-slate-400" />
+                <h3 className="text-sm font-semibold text-slate-50">
                   NASA JPL Horizons Ephemeris
                 </h3>
               </div>
@@ -177,7 +174,7 @@ export function DataCitationsModal({
                 href="https://ssd.jpl.nasa.gov/horizons/"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1 rounded bg-slate-800 px-2 py-0.5 font-mono text-[10px] text-emerald-300 transition hover:bg-slate-700"
+                className="inline-flex items-center gap-1 rounded bg-slate-800 font-mono text-xs text-slate-300 underline underline-offset-4 transition hover:bg-slate-700"
               >
                 <span>ssd.jpl.nasa.gov/horizons</span>
                 <ExternalLink className="h-2.5 w-2.5" />
@@ -197,14 +194,14 @@ export function DataCitationsModal({
               unavailable, the timeline uses the same deterministic analytical lunar ephemeris
               and libration model used by the data-generation fallback.
             </p>
-            <p className="mt-2 font-mono text-[11px] text-slate-400">
+            <p className="mt-2 font-mono text-xs text-slate-400">
               Credit: Jet Propulsion Laboratory, California Institute of Technology / NASA Solar System Dynamics.
             </p>
           </div>
 
           {/* Dataset Provenance Metadata */}
           {metadata && (
-            <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-800/80 bg-slate-950/40 px-3.5 py-2.5 font-mono text-[10px] text-slate-400">
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-800/80 bg-slate-950/40 px-3.5 py-2.5 font-mono text-[11px] text-slate-400">
               <span>Body: {metadata.body}</span>
               <span>Ephemeris: {metadata.ephemerisSource}</span>
               <span>Generated: {metadata.generatedAt}</span>
@@ -217,7 +214,7 @@ export function DataCitationsModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg bg-amber-500/20 px-4 py-1.5 text-xs font-semibold text-amber-300 ring-1 ring-amber-500/40 transition hover:bg-amber-500/30"
+            className="rounded-md border border-slate-100 bg-slate-100 px-4 py-1.5 text-sm font-semibold text-slate-950 transition hover:bg-white"
           >
             Close
           </button>

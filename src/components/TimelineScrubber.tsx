@@ -66,16 +66,16 @@ export function TimelineScrubber({
   const bucketSize = Math.max(1, Math.floor(hourly.length / stripBuckets));
 
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3.5">
+    <section className="border-t border-slate-700 pt-3">
       {/* Top Row: Title + Season Selector */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <CalendarClock className="h-4 w-4 text-amber-400" />
+          <CalendarClock className="h-4 w-4 text-slate-400" />
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
-              30-Day Ephemeris Timeline
+            <h3 className="text-sm font-semibold text-slate-100">
+              30-day timeline
             </h3>
-            <p className="font-mono text-[11px] text-slate-400">
+            <p className="font-mono text-xs text-slate-400">
               Day {dayNumber}/{totalDays} · {dateLabel} ·{' '}
               <span className="text-slate-200">{timeLabel}</span>
             </p>
@@ -84,7 +84,7 @@ export function TimelineScrubber({
 
         <div className="flex flex-wrap items-center justify-end gap-2">
           {seasons.length > 0 && (
-            <div className="flex items-center gap-1 rounded-lg border border-slate-800 bg-slate-950/70 p-0.5">
+            <div className="flex items-center gap-1 rounded-lg border border-slate-800 bg-slate-950 p-0.5">
               {seasons.map((s) => {
                 const active = s.id === selectedSeasonId && startDate === s.timeRange.start.slice(0, 10);
                 const shortName = s.name.replace(/ \d{4}$/, '').replace('South Pole ', '');
@@ -94,9 +94,9 @@ export function TimelineScrubber({
                     type="button"
                     onClick={() => onSelectSeason(s.id)}
                     title={s.description}
-                    className={`rounded-md px-2 py-1 text-[11px] font-medium transition ${
+                    className={`rounded-md px-2 py-1 text-xs font-medium transition ${
                       active
-                        ? 'bg-amber-500/20 text-amber-300 ring-1 ring-amber-500/40'
+                        ? 'bg-slate-700 text-white'
                         : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
@@ -106,19 +106,19 @@ export function TimelineScrubber({
               })}
             </div>
           )}
-          <label className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wide text-slate-400">
+          <label className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400">
             Window start (UTC)
             <DatePickerInput
               value={startDate}
               onChange={onChangeStartDate}
               ariaLabel="30-day timeline start date in UTC"
-              className="rounded-md border border-slate-700 bg-slate-950 px-2 py-1 font-mono text-[11px] normal-case text-slate-200 focus:border-amber-500 focus:outline-none"
+              className="rounded-md border border-slate-700 bg-slate-950 px-2 py-1 font-mono text-xs normal-case text-slate-200 focus:border-slate-300 focus:outline-none"
             />
           </label>
         </div>
       </div>
       {(isLoading || dataSource) && (
-        <p className="mt-1 text-right text-[10px] text-slate-500" aria-live="polite">
+        <p className="mt-1 text-right text-[11px] text-slate-500" aria-live="polite">
           {isLoading ? 'Calculating 30-day ephemeris…' : `Data: ${dataSource}`}
         </p>
       )}
@@ -126,11 +126,11 @@ export function TimelineScrubber({
       {/* Sun & Earth Visibility Barcode Strip */}
       {hourly.length > 0 && (
         <div className="mt-3 space-y-1">
-          <div className="flex items-center justify-between text-[10px] font-medium text-slate-400">
-            <span>Sun Illumination</span>
-            <span>Earth Line of Sight</span>
+          <div className="flex items-center justify-between text-[11px] font-medium text-slate-400">
+            <span>Sun</span>
+            <span>Earth line of sight</span>
           </div>
-          <div className="overflow-hidden rounded-md border border-slate-800/80 bg-slate-950/90 p-1">
+          <div className="overflow-hidden rounded-md border border-slate-800/80 bg-slate-950 p-1">
             {/* Sun row */}
             <div className="flex h-2 w-full gap-[1px]">
               {Array.from({ length: stripBuckets }).map((_, b) => {
@@ -147,10 +147,10 @@ export function TimelineScrubber({
                     style={{
                       backgroundColor:
                         sunRatio > 0.5
-                          ? 'rgba(251, 191, 36, 0.85)'
+                          ? 'rgba(239, 185, 58, 0.85)'
                           : sunRatio > 0
-                            ? 'rgba(251, 191, 36, 0.35)'
-                            : 'rgba(30, 41, 59, 0.7)',
+                            ? 'rgba(239, 185, 58, 0.35)'
+                            : 'rgba(47, 46, 42, 0.7)',
                     }}
                   />
                 );
@@ -172,10 +172,10 @@ export function TimelineScrubber({
                     style={{
                       backgroundColor:
                         earthRatio > 0.5
-                          ? 'rgba(56, 189, 248, 0.85)'
+                          ? 'rgba(106, 169, 220, 0.85)'
                           : earthRatio > 0
-                            ? 'rgba(56, 189, 248, 0.35)'
-                            : 'rgba(30, 41, 59, 0.7)',
+                            ? 'rgba(106, 169, 220, 0.35)'
+                            : 'rgba(47, 46, 42, 0.7)',
                     }}
                   />
                 );
@@ -195,9 +195,9 @@ export function TimelineScrubber({
           value={hourIndex}
           onChange={(e) => onChangeHour(Number(e.target.value))}
           aria-label="Scrub 30-day lunar timeline"
-          className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-800 accent-amber-400"
+          className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-800 accent-slate-200"
         />
-        <div className="mt-1 flex justify-between font-mono text-[10px] text-slate-500">
+        <div className="mt-1 flex justify-between font-mono text-[11px] text-slate-500">
           <span>Day 1</span>
           <span>Day 8</span>
           <span>Day 15</span>
@@ -212,7 +212,7 @@ export function TimelineScrubber({
           <button
             type="button"
             onClick={onTogglePlay}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-slate-950 shadow-sm transition hover:bg-amber-400"
+            className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-4 py-1.5 text-sm font-semibold text-slate-950 transition hover:bg-white"
           >
             {isPlaying ? (
               <>
@@ -231,7 +231,7 @@ export function TimelineScrubber({
             type="button"
             onClick={() => stepBy(-24)}
             title="Step back 24 hours"
-            className="rounded-lg border border-slate-800 bg-slate-950/70 p-1.5 text-slate-300 transition hover:border-slate-700 hover:text-white"
+            className="rounded-lg border border-slate-800 bg-slate-950 p-1.5 text-slate-300 transition hover:border-slate-700 hover:text-white"
           >
             <ChevronsLeft className="h-3.5 w-3.5" />
           </button>
@@ -239,7 +239,7 @@ export function TimelineScrubber({
             type="button"
             onClick={() => stepBy(-1)}
             title="Step back 1 hour"
-            className="rounded-lg border border-slate-800 bg-slate-950/70 p-1.5 text-slate-300 transition hover:border-slate-700 hover:text-white"
+            className="rounded-lg border border-slate-800 bg-slate-950 p-1.5 text-slate-300 transition hover:border-slate-700 hover:text-white"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
           </button>
@@ -247,7 +247,7 @@ export function TimelineScrubber({
             type="button"
             onClick={() => stepBy(1)}
             title="Step forward 1 hour"
-            className="rounded-lg border border-slate-800 bg-slate-950/70 p-1.5 text-slate-300 transition hover:border-slate-700 hover:text-white"
+            className="rounded-lg border border-slate-800 bg-slate-950 p-1.5 text-slate-300 transition hover:border-slate-700 hover:text-white"
           >
             <ChevronRight className="h-3.5 w-3.5" />
           </button>
@@ -255,7 +255,7 @@ export function TimelineScrubber({
             type="button"
             onClick={() => stepBy(24)}
             title="Step forward 24 hours"
-            className="rounded-lg border border-slate-800 bg-slate-950/70 p-1.5 text-slate-300 transition hover:border-slate-700 hover:text-white"
+            className="rounded-lg border border-slate-800 bg-slate-950 p-1.5 text-slate-300 transition hover:border-slate-700 hover:text-white"
           >
             <ChevronsRight className="h-3.5 w-3.5" />
           </button>
@@ -263,23 +263,23 @@ export function TimelineScrubber({
             type="button"
             onClick={() => onChangeHour(0)}
             title="Reset to Day 1"
-            className="rounded-lg border border-slate-800 bg-slate-950/70 p-1.5 text-slate-400 transition hover:border-slate-700 hover:text-white"
+            className="rounded-lg border border-slate-800 bg-slate-950 p-1.5 text-slate-400 transition hover:border-slate-700 hover:text-white"
           >
             <RotateCcw className="h-3.5 w-3.5" />
           </button>
         </div>
 
         {/* Speed Selector */}
-        <div className="flex items-center gap-1 rounded-lg border border-slate-800 bg-slate-950/70 p-0.5 text-[11px]">
+        <div className="flex items-center gap-1 rounded-lg border border-slate-800 bg-slate-950 p-0.5 text-xs">
           <span className="px-1.5 text-slate-500">Speed</span>
           {([1, 2, 4] as PlaybackSpeed[]).map((spd) => (
             <button
               key={spd}
               type="button"
               onClick={() => onChangeSpeed(spd)}
-              className={`rounded-md px-2 py-0.5 font-mono font-medium transition ${
+              className={`rounded-md font-mono font-medium transition ${
                 playbackSpeed === spd
-                  ? 'bg-slate-800 text-amber-300'
+                  ? 'bg-slate-700 text-white'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -288,6 +288,6 @@ export function TimelineScrubber({
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

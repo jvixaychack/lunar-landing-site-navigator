@@ -204,16 +204,16 @@ export function PolarHorizonSkyPlot({
   };
 
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3.5">
+    <section className="border-t border-slate-700 pt-3">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Compass className="h-4 w-4 text-amber-400" />
+          <Compass className="h-4 w-4 text-slate-400" />
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
-              360° Polar Horizon Sky-Plot
+            <h3 className="text-sm font-semibold text-slate-100">
+              Horizon sky plot
             </h3>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-xs text-slate-400">
               {subtitle ?? 'Terrain horizon mask + 30-day Sun & Earth (libration) paths'}
             </p>
           </div>
@@ -222,13 +222,13 @@ export function PolarHorizonSkyPlot({
         <button
           type="button"
           onClick={handleToggleZoom}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700/80 bg-slate-950/70 px-2.5 py-1 text-[11px] font-medium text-slate-300 transition hover:border-amber-500/50 hover:text-amber-300"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700/80 bg-slate-950 px-2.5 py-1 text-xs font-medium text-slate-300 transition hover:border-slate-400 hover:text-white"
           title="Toggle radial elevation scale"
         >
           {zoomMode === 'wide' ? (
             <>
               <ZoomIn className="h-3.5 w-3.5 text-amber-400" />
-              <span>Horizon Zoom (-10°..+15°)</span>
+              <span>Zoom to horizon (-10° to +15°)</span>
             </>
           ) : (
             <>
@@ -241,7 +241,7 @@ export function PolarHorizonSkyPlot({
 
       {/* Explorer-mode micro-callout */}
       {viewMode === 'explorer' && (
-        <div className="mt-2.5 rounded-lg border border-sky-500/30 bg-sky-950/25 px-3 py-2 text-[11px] leading-relaxed text-sky-100/90">
+        <div className="mt-2.5 rounded-lg border border-sky-500/30 bg-sky-950/25 px-3 py-2 text-xs leading-relaxed text-sky-100/90">
           <span className="font-semibold text-sky-300">How to read this sky-plot:</span>{' '}
           Imagine lying on your back at <span className="font-medium text-white">{site.name}</span>{' '}
           looking straight up. The <span className="text-slate-300 font-medium">dark jagged ring</span>{' '}
@@ -266,14 +266,14 @@ export function PolarHorizonSkyPlot({
         >
           <defs>
             <radialGradient id={skyBgGradId} cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#0f172a" />
-              <stop offset="75%" stopColor="#090f1d" />
-              <stop offset="100%" stopColor="#020617" />
+              <stop offset="0%" stopColor="#1f1e1b" />
+              <stop offset="75%" stopColor="#181715" />
+              <stop offset="100%" stopColor="#141311" />
             </radialGradient>
             <radialGradient id={terrainMaskGradId} cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#1e293b" stopOpacity="0.82" />
-              <stop offset="65%" stopColor="#0f172a" stopOpacity="0.92" />
-              <stop offset="100%" stopColor="#020617" stopOpacity="0.97" />
+              <stop offset="0%" stopColor="#2f2e2a" stopOpacity="0.82" />
+              <stop offset="65%" stopColor="#1f1e1b" stopOpacity="0.92" />
+              <stop offset="100%" stopColor="#141311" stopOpacity="0.97" />
             </radialGradient>
             <filter id={sunGlowId} x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="3.5" result="blur" />
@@ -297,7 +297,7 @@ export function PolarHorizonSkyPlot({
             cy={CY}
             r={RADIUS}
             fill={`url(#${skyBgGradId})`}
-            stroke="rgba(148, 163, 184, 0.25)"
+            stroke="rgba(195, 190, 176, 0.25)"
             strokeWidth={1.2}
           />
 
@@ -322,8 +322,8 @@ export function PolarHorizonSkyPlot({
                   fill="none"
                   stroke={
                     isZeroHorizon
-                      ? 'rgba(52, 211, 153, 0.42)'
-                      : 'rgba(148, 163, 184, 0.16)'
+                      ? 'rgba(143, 194, 150, 0.42)'
+                      : 'rgba(195, 190, 176, 0.16)'
                   }
                   strokeWidth={isZeroHorizon ? 1.2 : 0.8}
                   strokeDasharray={isZeroHorizon ? '4 3' : '2 4'}
@@ -331,7 +331,7 @@ export function PolarHorizonSkyPlot({
                 <text
                   x={CX + 4}
                   y={CY - r + 10}
-                  fill={isZeroHorizon ? '#6ee7b7' : '#64748b'}
+                  fill={isZeroHorizon ? '#b0d6b4' : '#7d796e'}
                   fontSize="9"
                   fontFamily="ui-monospace, monospace"
                 >
@@ -356,14 +356,14 @@ export function PolarHorizonSkyPlot({
                   y1={CY}
                   x2={outer.x}
                   y2={outer.y}
-                  stroke="rgba(148, 163, 184, 0.14)"
+                  stroke="rgba(195, 190, 176, 0.14)"
                   strokeWidth={1}
                 />
                 <text
                   x={outer.x + c.dx}
                   y={outer.y + c.dy}
                   textAnchor={c.anchor}
-                  fill="#94a3b8"
+                  fill="#a39e92"
                   fontSize="10"
                   fontWeight="600"
                   fontFamily="ui-monospace, monospace"
@@ -379,7 +379,7 @@ export function PolarHorizonSkyPlot({
             <path
               d={terrainRidgePath}
               fill="none"
-              stroke="rgba(148, 163, 184, 0.65)"
+              stroke="rgba(195, 190, 176, 0.65)"
               strokeWidth={1.6}
               strokeLinejoin="round"
             />
@@ -391,7 +391,7 @@ export function PolarHorizonSkyPlot({
               key={`sun-${idx}`}
               points={seg.points}
               fill="none"
-              stroke={seg.visible ? '#fbbf24' : '#92400e'}
+              stroke={seg.visible ? '#efb93a' : '#6b4a0c'}
               strokeWidth={seg.visible ? 1.8 : 1.2}
               strokeDasharray={seg.visible ? undefined : '3 3'}
               strokeOpacity={seg.visible ? 0.85 : 0.45}
@@ -404,7 +404,7 @@ export function PolarHorizonSkyPlot({
               key={`earth-${idx}`}
               points={seg.points}
               fill="none"
-              stroke={seg.visible ? '#38bdf8' : '#fb7185'}
+              stroke={seg.visible ? '#6aa9dc' : '#dc7e71'}
               strokeWidth={seg.visible ? 2 : 1.4}
               strokeDasharray={seg.visible ? undefined : '3 3'}
               strokeOpacity={seg.visible ? 0.9 : 0.5}
@@ -419,7 +419,7 @@ export function PolarHorizonSkyPlot({
                 y1={CY}
                 x2={sunPos.x}
                 y2={sunPos.y}
-                stroke="rgba(251, 191, 36, 0.25)"
+                stroke="rgba(239, 185, 58, 0.25)"
                 strokeWidth={1}
                 strokeDasharray="2 3"
               />
@@ -428,22 +428,22 @@ export function PolarHorizonSkyPlot({
                   cx={sunPos.x}
                   cy={sunPos.y}
                   r={10}
-                  fill="rgba(251, 191, 36, 0.22)"
+                  fill="rgba(239, 185, 58, 0.22)"
                 />
               )}
               <circle
                 cx={sunPos.x}
                 cy={sunPos.y}
                 r={5.5}
-                fill={currentPoint.sunVisible ? '#fbbf24' : '#451a03'}
-                stroke={currentPoint.sunVisible ? '#fef3c7' : '#d97706'}
+                fill={currentPoint.sunVisible ? '#efb93a' : '#2b1d05'}
+                stroke={currentPoint.sunVisible ? '#fbeac4' : '#c98a12'}
                 strokeWidth={1.8}
                 filter={currentPoint.sunVisible ? `url(#${sunGlowId})` : undefined}
               />
               <text
                 x={sunPos.x + 9}
                 y={sunPos.y - 6}
-                fill={currentPoint.sunVisible ? '#fde68a' : '#f59e0b'}
+                fill={currentPoint.sunVisible ? '#f8dc9b' : '#e5a820'}
                 fontSize="9.5"
                 fontWeight="700"
                 fontFamily="ui-monospace, monospace"
@@ -461,7 +461,7 @@ export function PolarHorizonSkyPlot({
                 y1={CY}
                 x2={earthPos.x}
                 y2={earthPos.y}
-                stroke="rgba(56, 189, 248, 0.25)"
+                stroke="rgba(106, 169, 220, 0.25)"
                 strokeWidth={1}
                 strokeDasharray="2 3"
               />
@@ -470,25 +470,25 @@ export function PolarHorizonSkyPlot({
                   cx={earthPos.x}
                   cy={earthPos.y}
                   r={10}
-                  fill="rgba(56, 189, 248, 0.22)"
+                  fill="rgba(106, 169, 220, 0.22)"
                 />
               )}
               <circle
                 cx={earthPos.x}
                 cy={earthPos.y}
                 r={5.5}
-                fill={currentPoint.earthVisible ? '#0284c7' : '#4c0519'}
-                stroke={currentPoint.earthVisible ? '#bae6fd' : '#fb7185'}
+                fill={currentPoint.earthVisible ? '#3470a6' : '#3a1512'}
+                stroke={currentPoint.earthVisible ? '#c4def2' : '#dc7e71'}
                 strokeWidth={1.8}
                 filter={currentPoint.earthVisible ? `url(#${earthGlowId})` : undefined}
               />
               {currentPoint.earthVisible && (
-                <circle cx={earthPos.x - 1.2} cy={earthPos.y - 1} r={1.8} fill="#34d399" />
+                <circle cx={earthPos.x - 1.2} cy={earthPos.y - 1} r={1.8} fill="#8fc296" />
               )}
               <text
                 x={earthPos.x + 9}
                 y={earthPos.y + 11}
-                fill={currentPoint.earthVisible ? '#bae6fd' : '#fda4af'}
+                fill={currentPoint.earthVisible ? '#c4def2' : '#e9a398'}
                 fontSize="9.5"
                 fontWeight="700"
                 fontFamily="ui-monospace, monospace"
@@ -499,11 +499,11 @@ export function PolarHorizonSkyPlot({
           )}
 
           {/* Center Zenith Crosshair */}
-          <circle cx={CX} cy={CY} r={2} fill="#64748b" />
+          <circle cx={CX} cy={CY} r={2} fill="#7d796e" />
         </svg>
 
         {/* Interactive Hover Readout Bar */}
-        <div className="mt-2 flex min-h-[30px] w-full items-center justify-between rounded-lg border border-slate-800/90 bg-slate-950/75 px-3 py-1.5 font-mono text-[11px]">
+        <div className="mt-2 flex min-h-[30px] w-full items-center justify-between rounded-lg border border-slate-800/90 bg-slate-950 px-3 py-1.5 font-mono text-xs">
           {hoverInfo ? (
             <>
               <span className="text-slate-300">
@@ -537,14 +537,14 @@ export function PolarHorizonSkyPlot({
         </div>
 
         {/* Legend */}
-        <div className="mt-2.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[11px] text-slate-400">
+        <div className="mt-2.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs text-slate-400">
           <span className="inline-flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
             Sun (Visible)
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full bg-sky-400" />
-            Earth Line of Sight (Visible)
+            Earth line of sight (Visible)
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span className="h-0.5 w-3.5 border-t-2 border-dashed border-rose-400" />
@@ -556,6 +556,6 @@ export function PolarHorizonSkyPlot({
           </span>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
