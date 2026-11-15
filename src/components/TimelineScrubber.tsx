@@ -87,11 +87,7 @@ export function TimelineScrubber({
             <div className="flex items-center gap-1 rounded-lg border border-slate-800 bg-slate-950/70 p-0.5">
               {seasons.map((s) => {
                 const active = s.id === selectedSeasonId && startDate === s.timeRange.start.slice(0, 10);
-                const shortName = s.name
-                  .replace(' 2026', '')
-                  .replace(' 2027', '')
-                  .replace('Summer Solstice', 'Summer')
-                  .replace('Winter Solstice', 'Winter');
+                const shortName = s.name.replace(/ \d{4}$/, '').replace('South Pole ', '');
                 return (
                   <button
                     key={s.id}
@@ -132,7 +128,7 @@ export function TimelineScrubber({
         <div className="mt-3 space-y-1">
           <div className="flex items-center justify-between text-[10px] font-medium text-slate-400">
             <span>Sun Illumination</span>
-            <span>Earth DTE Link</span>
+            <span>Earth Line of Sight</span>
           </div>
           <div className="overflow-hidden rounded-md border border-slate-800/80 bg-slate-950/90 p-1">
             {/* Sun row */}
@@ -160,7 +156,7 @@ export function TimelineScrubber({
                 );
               })}
             </div>
-            {/* Earth DTE row */}
+            {/* Earth visibility row */}
             <div className="mt-1 flex h-2 w-full gap-[1px]">
               {Array.from({ length: stripBuckets }).map((_, b) => {
                 const start = b * bucketSize;

@@ -69,6 +69,31 @@ export function DataCitationsModal({
 
         {/* Body */}
         <div className="space-y-3.5 overflow-y-auto p-5 text-xs leading-relaxed text-slate-300">
+          {/* Artemis IV mission context */}
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/[0.06] p-4">
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-amber-300">
+                  Artemis IV Mission Context
+                </h3>
+                <p className="mt-2 text-slate-300">
+                  NASA describes Artemis IV as a planned 2028 crewed lunar South Pole landing. The
+                  coordinates shown here are illustrative study points, not NASA-selected Artemis IV
+                  landing sites. Seasonal presets are analysis windows, not official mission dates.
+                </p>
+              </div>
+              <a
+                href="https://www.nasa.gov/mission/artemis-iv/"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex shrink-0 items-center gap-1 rounded bg-slate-800 px-2 py-0.5 font-mono text-[10px] text-amber-300 transition hover:bg-slate-700"
+              >
+                <span>NASA mission</span>
+                <ExternalLink className="h-2.5 w-2.5" />
+              </a>
+            </div>
+          </div>
+
           {/* 1. NASA LRO LOLA */}
           <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
             <div className="flex items-start justify-between gap-2">
@@ -160,12 +185,14 @@ export function DataCitationsModal({
             </div>
             <p className="mt-2 text-slate-300">
               Hourly Sun and Earth topocentric azimuth/elevation series (including Earth lunar
-              libration figure-8 tracks for Direct-to-Earth comms) are computed from{' '}
+              libration) are computed from{' '}
               <strong className="text-white">NASA JPL Horizons (DE441)</strong> in the{' '}
               <span className="font-mono text-slate-200">
                 {metadata?.coordinateFrame ?? 'MEAN_ME (Mean Earth / Polar Axis)'}
               </span>{' '}
-              frame with atmospheric refraction disabled across 30-day mission windows. Selecting
+              frame with atmospheric refraction disabled across 30-day analysis windows. The
+              visibility metric indicates geometric line of sight above modeled terrain only; it
+              does not model radios, link budgets, or ground-network availability. Selecting
               a custom date requests a fresh hourly series; if a server-side Horizons request is
               unavailable, the timeline uses the same deterministic analytical lunar ephemeris
               and libration model used by the data-generation fallback.

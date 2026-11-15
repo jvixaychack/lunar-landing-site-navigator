@@ -236,9 +236,9 @@ function buildData(site: LunarSite, startDate: string, coordinates: Record<strin
   const sunVisibleHours = sunVisible.filter(Boolean).length;
   const earthVisibleHours = earthVisible.filter(Boolean).length;
   const kpis: SeasonKpis = {
-    solarPowerAvailabilityPct: Number((100 * sunVisibleHours / hourly.length).toFixed(2)),
+    sunlightAvailabilityPct: Number((100 * sunVisibleHours / hourly.length).toFixed(2)),
     continuousSunlightHours: longestSunRun,
-    dteCommsUptimePct: Number((100 * earthVisibleHours / hourly.length).toFixed(2)),
+    earthLineOfSightPct: Number((100 * earthVisibleHours / hourly.length).toFixed(2)),
     sunVisibleHours,
     earthVisibleHours,
     minSunElevationDeg: Number(Math.min(...sunElevations).toFixed(2)),

@@ -1,6 +1,6 @@
 import type { HourlyPoint } from '../types/lunar';
 
-export interface DteWindow {
+export interface EarthVisibilityWindow {
   startIndex: number;
   endIndex: number;
   durationHours: number;
@@ -8,19 +8,18 @@ export interface DteWindow {
   endTimestamp: string;
 }
 
-export interface DteSummary {
-  windows: DteWindow[];
+export interface EarthVisibilitySummary {
+  windows: EarthVisibilityWindow[];
   windowCount: number;
   longestWindowHours: number;
   totalVisibleHours: number;
 }
 
 /**
- * Computes contiguous Direct-to-Earth (DTE) line-of-sight communication windows
- * from an hourly ephemeris series.
+ * Computes contiguous periods when Earth is geometrically visible above terrain.
  */
-export function computeDteSummary(hourly: HourlyPoint[]): DteSummary {
-  const windows: DteWindow[] = [];
+export function computeEarthVisibilitySummary(hourly: HourlyPoint[]): EarthVisibilitySummary {
+  const windows: EarthVisibilityWindow[] = [];
   let currentStart: number | null = null;
   let totalVisibleHours = 0;
 

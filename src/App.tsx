@@ -21,7 +21,7 @@ import { formatLunarLatLon } from './utils/lunarProjection';
 export function App() {
   const [dataset, setDataset] = useState<SitesDataset | null>(null);
   const [selectedSite, setSelectedSite] = useState<LunarSite | null>(null);
-  const [selectedSeasonId, setSelectedSeasonId] = useState<string>('summer-solstice');
+  const [selectedSeasonId, setSelectedSeasonId] = useState<string>('equinox');
   const [hourIndex, setHourIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [playbackSpeed, setPlaybackSpeed] = useState<PlaybackSpeed>(1);
@@ -186,11 +186,11 @@ export function App() {
           </section>
         ) : (
           <>
-            {/* Sidebar: Candidate & Comparison Sites */}
+            {/* Sidebar: Study & Comparison Sites */}
             <aside className="flex w-full shrink-0 flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60 lg:w-64 xl:w-72">
           <div className="border-b border-slate-800 px-3.5 py-2.5">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-300">
-              Artemis South Pole Sites
+              Artemis IV South Pole Study Sites
             </h2>
           </div>
 
@@ -263,11 +263,11 @@ export function App() {
                     <div className="mt-1.5 flex items-center gap-3 border-t border-slate-800/70 pt-1.5 font-mono text-[10px] text-slate-400">
                       <span className="inline-flex items-center gap-1 text-amber-300/90">
                         <Sun className="h-3 w-3" />
-                        {siteSeason.kpis.solarPowerAvailabilityPct.toFixed(0)}%
+                        {siteSeason.kpis.sunlightAvailabilityPct.toFixed(0)}%
                       </span>
                       <span className="inline-flex items-center gap-1 text-sky-300/90">
                         <Radio className="h-3 w-3" />
-                        {siteSeason.kpis.dteCommsUptimePct.toFixed(0)}% DTE
+                        {siteSeason.kpis.earthLineOfSightPct.toFixed(0)}% Earth LOS
                       </span>
                     </div>
                   )}

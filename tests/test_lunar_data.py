@@ -28,7 +28,7 @@ EXPECTED_SITE_IDS = {
     "deep-crater-floor",
 }
 
-EXPECTED_SEASON_IDS = ("summer-solstice", "equinox", "winter-solstice")
+EXPECTED_SEASON_IDS = ("south-pole-summer", "equinox", "south-pole-winter")
 
 
 @pytest.fixture(scope="module")
@@ -48,16 +48,16 @@ def test_metadata_and_seasons_schema(dataset: dict) -> None:
     assert meta["atmosphericRefraction"] is False
     assert meta["horizonMaskResolutionDeg"] == 1
     assert meta["observerHeightM"] == pytest.approx(2.0)
-    assert meta["defaultSeason"] == "summer-solstice"
+    assert meta["defaultSeason"] == "equinox"
 
     seasons = meta["seasons"]
     assert len(seasons) == 3
     assert tuple(s["id"] for s in seasons) == EXPECTED_SEASON_IDS
 
     expected_windows = {
-        "summer-solstice": ("2026-11-14T00:00:00Z", "2026-12-13T23:00:00Z"),
-        "equinox": ("2027-01-27T00:00:00Z", "2027-02-25T23:00:00Z"),
-        "winter-solstice": ("2027-04-10T00:00:00Z", "2027-05-09T23:00:00Z"),
+        "south-pole-summer": ("2027-10-26T00:00:00Z", "2027-11-24T23:00:00Z"),
+        "equinox": ("2028-01-08T00:00:00Z", "2028-02-06T23:00:00Z"),
+        "south-pole-winter": ("2028-03-21T00:00:00Z", "2028-04-19T23:00:00Z"),
     }
     for season_meta in seasons:
         sid = season_meta["id"]
@@ -76,6 +76,7 @@ def test_sites_presence_and_coordinates(dataset: dict) -> None:
     by_id = {s["id"]: s for s in sites}
     for site in sites:
         coords = site["coordinates"]
+        assert site["role"] in {"study", "comparison"}
         assert -90.0 <= coords["latitudeDeg"] <= -80.0
         assert 0.0 <= coords["longitudeDeg"] < 360.0
         assert -10_000.0 <= coords["elevationM"] <= 12_000.0
@@ -158,37 +159,37 @@ def test_kpis_consistency_and_seasonal_extremes(dataset: dict) -> None:
             assert 0 <= k["continuousSunlightHours"] <= k["sunVisibleHours"] <= n
             assert k["continuousSunlightHours"] == gld.longest_true_run(sun_vis)
 
-            assert 0.0 <= k["solarPowerAvailabilityPct"] <= 100.0
-            assert k["solarPowerAvailabilityPct"] == pytest.approx(100.0 * sum(sun_vis) / n, abs=0.01)
+            assert 0.0 <= k["sunlightAvailabilityPct"] <= 100.0
+            assert k["sunlightAvailabilityPct"] == pytest.approx(100.0 * sum(sun_vis) / n, abs=0.01)
 
-            assert 0.0 <= k["dteCommsUptimePct"] <= 100.0
-            assert k["dteCommsUptimePct"] == pytest.approx(100.0 * sum(earth_vis) / n, abs=0.01)
+            assert 0.0 <= k["earthLineOfSightPct"] <= 100.0
+            assert k["earthLineOfSightPct"] == pytest.approx(100.0 * sum(earth_vis) / n, abs=0.01)
 
             assert k["minSunElevationDeg"] == pytest.approx(min(r["sunElevationDeg"] for r in hourly), abs=0.01)
             assert k["maxSunElevationDeg"] == pytest.approx(max(r["sunElevationDeg"] for r in hourly), abs=0.01)
             assert k["minEarthElevationDeg"] == pytest.approx(min(r["earthElevationDeg"] for r in hourly), abs=0.01)
             assert k["maxEarthElevationDeg"] == pytest.approx(max(r["earthElevationDeg"] for r in hourly), abs=0.01)
 
-    # Candidate sites exhibit strict Summer > Equinox > Winter solar elevation and availability ordering
+    # Study sites exhibit strict Summer > Equinox > Winter solar elevation and availability ordering
     for cid in ("shackleton-rim", "malapert-massif", "nobile-rim-1", "connecting-ridge", "peak-near-shackleton"):
-        summer_k = by_id[cid]["seasons"]["summer-solstice"]["kpis"]
+        summer_k = by_id[cid]["seasons"]["south-pole-summer"]["kpis"]
         equinox_k = by_id[cid]["seasons"]["equinox"]["kpis"]
-        winter_k = by_id[cid]["seasons"]["winter-solstice"]["kpis"]
+        winter_k = by_id[cid]["seasons"]["south-pole-winter"]["kpis"]
 
-        assert summer_k["solarPowerAvailabilityPct"] >= 75.0
-        assert summer_k["solarPowerAvailabilityPct"] > equinox_k["solarPowerAvailabilityPct"] > winter_k["solarPowerAvailabilityPct"]
+        assert summer_k["sunlightAvailabilityPct"] >= 75.0
+        assert summer_k["sunlightAvailabilityPct"] > equinox_k["sunlightAvailabilityPct"] > winter_k["sunlightAvailabilityPct"]
         assert summer_k["maxSunElevationDeg"] > equinox_k["maxSunElevationDeg"] > winter_k["maxSunElevationDeg"]
-        assert summer_k["dteCommsUptimePct"] >= 40.0
-        assert winter_k["dteCommsUptimePct"] >= 50.0
+        assert summer_k["earthLineOfSightPct"] >= 40.0
+        assert winter_k["earthLineOfSightPct"] >= 50.0
 
-    # Deep Crater Floor stays permanently shadowed in all 3 seasons
+    # Deep Crater Floor receives no direct sunlight in all 3 sampled windows
     for sid in EXPECTED_SEASON_IDS:
         fk = by_id["deep-crater-floor"]["seasons"][sid]["kpis"]
         assert fk["minHorizonMaskDeg"] > 5.0
         assert fk["maxHorizonMaskDeg"] > 20.0
-        assert fk["solarPowerAvailabilityPct"] == 0.0
+        assert fk["sunlightAvailabilityPct"] == 0.0
         assert fk["continuousSunlightHours"] == 0
-        assert fk["dteCommsUptimePct"] == 0.0
+        assert fk["earthLineOfSightPct"] == 0.0
 
 
 def test_offline_ephemeris_determinism_and_accuracy_all_seasons(dataset: dict) -> None:

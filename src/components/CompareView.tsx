@@ -23,7 +23,7 @@ import type {
   SeasonMetadata,
 } from '../types/lunar';
 import {
-  computeDteSummary,
+  computeEarthVisibilitySummary,
   computeShadowSummary,
   formatSignedDeg,
   formatUtcTimestamp,
@@ -88,7 +88,7 @@ export function CompareView({
   const defaultSeasonA =
     seasons.find((s) => s.id === defaultSeasonId)?.id ?? seasons[0]?.id ?? '';
   const defaultSeasonB =
-    seasons.find((s) => s.id === 'winter-solstice')?.id ??
+    seasons.find((s) => s.id === 'south-pole-winter')?.id ??
     seasons[seasons.length - 1]?.id ??
     seasons[0]?.id ??
     '';
@@ -160,16 +160,16 @@ export function CompareView({
     () => (dataB ? computeShadowSummary(dataB.hourly) : null),
     [dataB],
   );
-  const dteA = useMemo(
-    () => (dataA ? computeDteSummary(dataA.hourly) : null),
+  const earthVisibilityA = useMemo(
+    () => (dataA ? computeEarthVisibilitySummary(dataA.hourly) : null),
     [dataA],
   );
-  const dteB = useMemo(
-    () => (dataB ? computeDteSummary(dataB.hourly) : null),
+  const earthVisibilityB = useMemo(
+    () => (dataB ? computeEarthVisibilitySummary(dataB.hourly) : null),
     [dataB],
   );
 
-  if (!resolvedSiteA || !resolvedSiteB || !dataA || !dataB || !shadowA || !shadowB || !dteA || !dteB) {
+  if (!resolvedSiteA || !resolvedSiteB || !dataA || !dataB || !shadowA || !shadowB || !earthVisibilityA || !earthVisibilityB) {
     const error = resultA.error ?? resultB.error;
     return (
       <div className={`flex h-full items-center justify-center rounded-xl border p-6 text-xs ${error ? 'border-rose-500/40 bg-rose-950/30 text-rose-200' : 'border-slate-800 bg-slate-900/60 text-slate-400'}`} role={error ? 'alert' : 'status'}>
@@ -231,12 +231,12 @@ export function CompareView({
     onChangeHour(0);
   };
 
-  const applySolsticePreset = () => {
+  const applySeasonalContrastPreset = () => {
     setCompareMode('windows');
     const rim = sites.find((s) => s.id === 'shackleton-rim') ?? sites[0];
     if (rim) setSharedSiteId(rim.id);
-    const summer = seasons.find((s) => s.id === 'summer-solstice');
-    const winter = seasons.find((s) => s.id === 'winter-solstice');
+    const summer = seasons.find((s) => s.id === 'south-pole-summer');
+    const winter = seasons.find((s) => s.id === 'south-pole-winter');
     if (summer) {
       setSeasonAId(summer.id);
       setStartDateA(summer.timeRange.start.slice(0, 10));
@@ -251,10 +251,10 @@ export function CompareView({
   // Core delta calculations (B - A)
   const deltaSunlitHours = dataB.kpis.sunVisibleHours - dataA.kpis.sunVisibleHours;
   const deltaSolarPct =
-    dataB.kpis.solarPowerAvailabilityPct - dataA.kpis.solarPowerAvailabilityPct;
+    dataB.kpis.sunlightAvailabilityPct - dataA.kpis.sunlightAvailabilityPct;
   const deltaMaxShadow = shadowB.maxShadowHours - shadowA.maxShadowHours;
-  const deltaDtePct = dataB.kpis.dteCommsUptimePct - dataA.kpis.dteCommsUptimePct;
-  const deltaDteHours = dataB.kpis.earthVisibleHours - dataA.kpis.earthVisibleHours;
+  const deltaEarthLosPct = dataB.kpis.earthLineOfSightPct - dataA.kpis.earthLineOfSightPct;
+  const deltaEarthLosHours = dataB.kpis.earthVisibleHours - dataA.kpis.earthVisibleHours;
   const deltaContinuousSun =
     dataB.kpis.continuousSunlightHours - dataA.kpis.continuousSunlightHours;
   const deltaElevationM =
@@ -300,7 +300,7 @@ export function CompareView({
                 Compare Sites &amp; Launch Windows
               </h2>
               <p className="text-[11px] text-slate-400">
-                Side-by-side horizon sky-plots and solar/DTE trade-off deltas
+                Side-by-side horizon sky-plots and solar/Earth-visibility trade-offs
               </p>
             </div>
           </div>
@@ -334,7 +334,7 @@ export function CompareView({
                 }`}
               >
                 <CalendarRange className="h-3.5 w-3.5" />
-                <span>Two Launch Windows</span>
+                <span>Two 30-Day Windows</span>
               </button>
             </div>
 
@@ -347,7 +347,7 @@ export function CompareView({
             </button>
             <button
               type="button"
-              onClick={applySolsticePreset}
+              onClick={applySeasonalContrastPreset}
               className="rounded-lg border border-slate-700/80 bg-slate-950/70 px-2.5 py-1 text-[11px] font-medium text-slate-300 transition hover:border-sky-500/50 hover:text-sky-300"
             >
               Preset: Summer vs. Winter
@@ -389,7 +389,7 @@ export function CompareView({
                 >
                   {sites.map((s) => (
                     <option key={s.id} value={s.id}>
-                      {s.name} ({s.role === 'comparison' ? 'PSR' : 'Candidate'})
+                      {s.name} ({s.role === 'comparison' ? 'Comparison' : 'Study site'})
                     </option>
                   ))}
                 </select>
@@ -397,7 +397,7 @@ export function CompareView({
 
               <label className="block">
                 <span className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-slate-400">
-                  Mission Window
+                  Seasonal Preset
                 </span>
                 <select
                   value={resolvedSeasonIdA}
@@ -475,7 +475,7 @@ export function CompareView({
                 >
                   {sites.map((s) => (
                     <option key={s.id} value={s.id}>
-                      {s.name} ({s.role === 'comparison' ? 'PSR' : 'Candidate'})
+                      {s.name} ({s.role === 'comparison' ? 'Comparison' : 'Study site'})
                     </option>
                   ))}
                 </select>
@@ -483,7 +483,7 @@ export function CompareView({
 
               <label className="block">
                 <span className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-slate-400">
-                  Mission Window
+                  Seasonal Preset
                 </span>
                 <select
                   value={resolvedSeasonIdB}
@@ -686,7 +686,7 @@ export function CompareView({
                   }`}
                 >
                   <Radio className="h-3 w-3" />
-                  {currentA.earthVisible ? 'DTE Up' : 'No DTE'}
+                  {currentA.earthVisible ? 'Earth Visible' : 'Earth Blocked'}
                 </span>
               </div>
             )}
@@ -740,7 +740,7 @@ export function CompareView({
                   }`}
                 >
                   <Radio className="h-3 w-3" />
-                  {currentB.earthVisible ? 'DTE Up' : 'No DTE'}
+                  {currentB.earthVisible ? 'Earth Visible' : 'Earth Blocked'}
                 </span>
               </div>
             )}
@@ -763,11 +763,10 @@ export function CompareView({
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-200">
-              30-Day Mission Delta Comparison Table
+              30-Day Scenario Comparison Table
             </h3>
             <p className="text-[11px] text-slate-400">
-              Highlights differences in total sunlit hours, max shadow duration, and Direct-to-Earth
-              (DTE) comms uptime
+              Compares solar illumination, terrain shadowing, and geometric Earth line of sight.
             </p>
           </div>
           {resolvedSiteA.id !== resolvedSiteB.id &&
@@ -810,19 +809,19 @@ export function CompareView({
                     <span>Total Sunlit Hours</span>
                   </div>
                   <div className="mt-0.5 text-[11px] text-slate-400">
-                    Solar power availability (% of {maxHours}h)
+                    Sunlit fraction (% of {maxHours}h)
                   </div>
                 </td>
                 <td className="py-3 px-3 text-slate-100">
                   <div className="text-sm font-bold">{dataA.kpis.sunVisibleHours} h</div>
                   <div className="text-[11px] text-slate-400">
-                    {dataA.kpis.solarPowerAvailabilityPct.toFixed(1)}%
+                    {dataA.kpis.sunlightAvailabilityPct.toFixed(1)}%
                   </div>
                 </td>
                 <td className="py-3 px-3 text-slate-100">
                   <div className="text-sm font-bold">{dataB.kpis.sunVisibleHours} h</div>
                   <div className="text-[11px] text-slate-400">
-                    {dataB.kpis.solarPowerAvailabilityPct.toFixed(1)}%
+                    {dataB.kpis.sunlightAvailabilityPct.toFixed(1)}%
                   </div>
                 </td>
                 <td className="py-3 pl-3">
@@ -873,42 +872,42 @@ export function CompareView({
                 </td>
               </tr>
 
-              {/* 3. DTE Comms Uptime (Highlighted) */}
+              {/* 3. Earth Line-of-Sight Visibility (Highlighted) */}
               <tr className="bg-sky-500/[0.04]">
                 <td className="py-3 pr-4 font-sans">
                   <div className="flex items-center gap-2 font-semibold text-white">
                     <Radio className="h-4 w-4 text-sky-400" />
-                    <span>DTE Comms Uptime</span>
+                    <span>Earth Line of Sight</span>
                   </div>
                   <div className="mt-0.5 text-[11px] text-slate-400">
-                    Direct-to-Earth line-of-sight visibility
+                    Geometric visibility above local terrain; no link budget or network availability
                   </div>
                 </td>
                 <td className="py-3 px-3 text-slate-100">
                   <div className="text-sm font-bold">
-                    {dataA.kpis.dteCommsUptimePct.toFixed(1)}%
+                    {dataA.kpis.earthLineOfSightPct.toFixed(1)}%
                   </div>
                   <div className="text-[11px] text-slate-400">
-                    {dataA.kpis.earthVisibleHours} h · {dteA.windowCount} windows
+                    {dataA.kpis.earthVisibleHours} h · {earthVisibilityA.windowCount} windows
                   </div>
                 </td>
                 <td className="py-3 px-3 text-slate-100">
                   <div className="text-sm font-bold">
-                    {dataB.kpis.dteCommsUptimePct.toFixed(1)}%
+                    {dataB.kpis.earthLineOfSightPct.toFixed(1)}%
                   </div>
                   <div className="text-[11px] text-slate-400">
-                    {dataB.kpis.earthVisibleHours} h · {dteB.windowCount} windows
+                    {dataB.kpis.earthVisibleHours} h · {earthVisibilityB.windowCount} windows
                   </div>
                 </td>
                 <td className="py-3 pl-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-sm font-bold text-white">
-                      {formatDeltaNumber(deltaDtePct, '%', 1)}
+                      {formatDeltaNumber(deltaEarthLosPct, '%', 1)}
                     </span>
                     <span className="text-[11px] text-slate-400">
-                      ({formatDeltaNumber(deltaDteHours, ' h', 0)})
+                      ({formatDeltaNumber(deltaEarthLosHours, ' h', 0)})
                     </span>
-                    {renderFavorBadge(deltaDtePct, true)}
+                    {renderFavorBadge(deltaEarthLosPct, true)}
                   </div>
                 </td>
               </tr>

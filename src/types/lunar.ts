@@ -1,4 +1,4 @@
-export type SeasonId = 'summer-solstice' | 'equinox' | 'winter-solstice' | string;
+export type SeasonId = 'south-pole-summer' | 'equinox' | 'south-pole-winter' | string;
 
 export type ViewMode = 'planner' | 'explorer' | 'compare';
 
@@ -25,9 +25,9 @@ export interface SeasonMetadata {
 }
 
 export interface SeasonKpis {
-  solarPowerAvailabilityPct: number;
+  sunlightAvailabilityPct: number;
   continuousSunlightHours: number;
-  dteCommsUptimePct: number;
+  earthLineOfSightPct: number;
   sunVisibleHours: number;
   earthVisibleHours: number;
   minSunElevationDeg: number;
@@ -58,7 +58,7 @@ export interface SiteSeasonData {
 export interface LunarSite {
   id: string;
   name: string;
-  role: 'candidate' | 'comparison' | string;
+  role: 'study' | 'comparison' | string;
   description: string;
   coordinates: SiteCoordinates;
   comparisonTargetId?: string | null;

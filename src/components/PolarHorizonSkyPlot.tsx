@@ -544,7 +544,7 @@ export function PolarHorizonSkyPlot({
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full bg-sky-400" />
-            Earth DTE (Visible)
+            Earth Line of Sight (Visible)
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span className="h-0.5 w-3.5 border-t-2 border-dashed border-rose-400" />

@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Generate Lunar South Pole seasonal illumination and Earth DTE visibility dataset.
+"""Generate lunar South Pole seasonal illumination and Earth visibility data.
 
-Builds ``public/data/sites.json`` for five Artemis III Lunar South Pole
-candidate sites (Shackleton Rim, Malapert Massif, Nobile Rim 1, Connecting
-Ridge, and Peak Near Shackleton) plus a nearby Deep Crater Floor comparison
-point ~5 km from Shackleton Rim to demonstrate extreme shadow contrast across
-three 30-day (720-hour) lunar seasonal windows in 2026-2027:
-  - Summer Solstice 2026 (2026-11-14 to 2026-12-13 UTC)
-  - Equinox 2027 (2027-01-27 to 2027-02-25 UTC)
-  - Winter Solstice 2027 (2027-04-10 to 2027-05-09 UTC)
+Builds ``public/data/sites.json`` for five illustrative lunar South Pole study
+sites (Shackleton Rim, Malapert Massif, Nobile Rim 1, Connecting Ridge, and
+Peak Near Shackleton) plus a nearby Deep Crater Floor comparison point ~5 km
+from Shackleton Rim. These are modeled locations for Artemis IV planning, not
+NASA-selected Artemis IV landing sites. The dataset includes three 30-day
+(720-hour) seasonal sample windows near NASA's planned 2028 mission timeframe:
+  - South Pole Summer 2027 (2027-10-26 to 2027-11-24 UTC)
+  - Equinox 2028 (2028-01-08 to 2028-02-06 UTC)
+  - South Pole Winter 2028 (2028-03-21 to 2028-04-19 UTC)
 
 Note: Because the Moon's 1.54 deg axial tilt regresses with the 18.6-year
 lunar nodal precession cycle, lunar seasons follow the ~346.6-day draconic
@@ -81,38 +82,38 @@ class SeasonSpec:
 
 SEASONS: tuple[SeasonSpec, ...] = (
     SeasonSpec(
-        id="summer-solstice",
-        name="Summer Solstice 2026",
-        start_utc=datetime(2026, 11, 14, 0, 0, tzinfo=timezone.utc),
-        end_utc=datetime(2026, 12, 13, 23, 0, tzinfo=timezone.utc),
+        id="south-pole-summer",
+        name="South Pole Summer 2027",
+        start_utc=datetime(2027, 10, 26, 0, 0, tzinfo=timezone.utc),
+        end_utc=datetime(2027, 11, 24, 23, 0, tzinfo=timezone.utc),
         description=(
-            "Lunar South Pole southern summer maximum (sub-solar latitude near "
-            "-1.57 deg; peak illumination across high polar rims)."
+            "30-day sample near the lunar South Pole southern summer maximum; "
+            "an approximate seasonal reference, not an Artemis IV operations window."
         ),
     ),
     SeasonSpec(
         id="equinox",
-        name="Equinox 2027",
-        start_utc=datetime(2027, 1, 27, 0, 0, tzinfo=timezone.utc),
-        end_utc=datetime(2027, 2, 25, 23, 0, tzinfo=timezone.utc),
+        name="Equinox 2028",
+        start_utc=datetime(2028, 1, 8, 0, 0, tzinfo=timezone.utc),
+        end_utc=datetime(2028, 2, 6, 23, 0, tzinfo=timezone.utc),
         description=(
-            "Lunar South Pole equinox window centered on the 2027-02-11 "
-            "equatorial Sun crossing (0 deg sub-solar latitude)."
+            "30-day sample around the predicted lunar equinox in early 2028; "
+            "an approximate seasonal reference, not an Artemis IV operations window."
         ),
     ),
     SeasonSpec(
-        id="winter-solstice",
-        name="Winter Solstice 2027",
-        start_utc=datetime(2027, 4, 10, 0, 0, tzinfo=timezone.utc),
-        end_utc=datetime(2027, 5, 9, 23, 0, tzinfo=timezone.utc),
+        id="south-pole-winter",
+        name="South Pole Winter 2028",
+        start_utc=datetime(2028, 3, 21, 0, 0, tzinfo=timezone.utc),
+        end_utc=datetime(2028, 4, 19, 23, 0, tzinfo=timezone.utc),
         description=(
-            "Lunar South Pole southern winter minimum centered on 2027-04-25 "
-            "(sub-solar latitude near +1.56 deg; maximum polar shadowing)."
+            "30-day sample near the lunar South Pole southern winter maximum; "
+            "an approximate seasonal reference, not an Artemis IV operations window."
         ),
     ),
 )
 
-DEFAULT_SEASON_ID = "summer-solstice"
+DEFAULT_SEASON_ID = "equinox"
 
 
 @dataclass(frozen=True)
@@ -133,33 +134,33 @@ SITES: tuple[SiteSpec, ...] = (
     SiteSpec(
         id="shackleton-rim",
         name="Shackleton Rim",
-        role="candidate",
+        role="study",
         latitude_deg=-89.7797,
         longitude_deg=203.6490,
         elevation_m=1736.5,
         description=(
             "High-illumination crest on the rim of Shackleton Crater "
             "(Mazarico Site 4 vicinity), offering prolonged southern summer "
-            "sunlight adjacent to permanently shadowed crater interiors."
+            "sunlight near shadowed crater interiors."
         ),
     ),
     SiteSpec(
         id="malapert-massif",
         name="Malapert Massif",
-        role="candidate",
+        role="study",
         latitude_deg=-85.9876,
         longitude_deg=2.0528,
         elevation_m=5172.0,
         description=(
             "Prominent Earth-facing summit massif on the South Pole-Aitken "
-            "basin rim (~5.2 km elevation) providing high Direct-to-Earth "
-            "communications uptime."
+            "basin rim (~5.2 km elevation) with favorable modeled Earth "
+            "line-of-sight geometry."
         ),
     ),
     SiteSpec(
         id="nobile-rim-1",
         name="Nobile Rim 1",
-        role="candidate",
+        role="study",
         latitude_deg=-85.2910,
         longitude_deg=36.9886,
         elevation_m=6772.5,
@@ -172,7 +173,7 @@ SITES: tuple[SiteSpec, ...] = (
     SiteSpec(
         id="connecting-ridge",
         name="Connecting Ridge",
-        role="candidate",
+        role="study",
         latitude_deg=-89.4380,
         longitude_deg=222.7170,
         elevation_m=1957.5,
@@ -184,7 +185,7 @@ SITES: tuple[SiteSpec, ...] = (
     SiteSpec(
         id="peak-near-shackleton",
         name="Peak Near Shackleton",
-        role="candidate",
+        role="study",
         latitude_deg=-88.8092,
         longitude_deg=123.7077,
         elevation_m=1647.5,
@@ -201,9 +202,9 @@ SITES: tuple[SiteSpec, ...] = (
         longitude_deg=159.6417,
         elevation_m=-1355.5,
         description=(
-            "Permanently shadowed floor point inside Shackleton Crater located "
-            "~5.0 km from Shackleton Rim, demonstrating extreme terrain "
-            "occlusion and total absence of direct sunlight and Earth DTE."
+            "Crater-floor comparison point inside Shackleton Crater located "
+            "~5.0 km from the modeled Shackleton Rim point, illustrating "
+            "terrain occlusion in the selected seasonal windows."
         ),
         comparison_target_id="shackleton-rim",
     ),
@@ -690,9 +691,9 @@ def evaluate_site_season(
 
     season_payload = {
         "kpis": {
-            "solarPowerAvailabilityPct": round(100.0 * sun_vis_hours / n_hours, 2),
+            "sunlightAvailabilityPct": round(100.0 * sun_vis_hours / n_hours, 2),
             "continuousSunlightHours": longest_true_run(sun_vis_flags),
-            "dteCommsUptimePct": round(100.0 * earth_vis_hours / n_hours, 2),
+            "earthLineOfSightPct": round(100.0 * earth_vis_hours / n_hours, 2),
             "sunVisibleHours": sun_vis_hours,
             "earthVisibleHours": earth_vis_hours,
             "minSunElevationDeg": round(min(r["sunElevationDeg"] for r in hourly_rows), 2),
@@ -856,8 +857,8 @@ def main() -> None:
         for s in dataset["sites"]:
             k = s["seasons"][sid]["kpis"]
             print(
-                f"  - {s['name']:22s} | Solar: {k['solarPowerAvailabilityPct']:6.2f}% "
-                f"({k['continuousSunlightHours']:3d}h cont.) | DTE: {k['dteCommsUptimePct']:6.2f}%"
+                f"  - {s['name']:22s} | Sunlight: {k['sunlightAvailabilityPct']:6.2f}% "
+                f"({k['continuousSunlightHours']:3d}h cont.) | Earth LOS: {k['earthLineOfSightPct']:6.2f}%"
             )
 
 

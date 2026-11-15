@@ -57,8 +57,9 @@ export function AnalyticalDashboard({
           Select a Lunar South Pole Site
         </h2>
         <p className="mt-1 max-w-xs text-xs text-slate-400">
-          Click any Artemis candidate or comparison site from the list or Lunaserv map to inspect
-          its 360° horizon sky-plot, solar power potential, and DTE comms windows.
+          Click any Artemis IV study or comparison site from the list or Lunaserv map to inspect
+          its 360° horizon sky plot, geometric sunlight availability, and Earth line-of-sight
+          windows.
         </p>
       </div>
     );
@@ -115,7 +116,7 @@ export function AnalyticalDashboard({
                 : 'bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30'
             }`}
           >
-            {isComparison ? 'Comparison (PSR)' : 'Artemis Candidate'}
+            {isComparison ? 'Comparison Point' : 'Study Site'}
           </span>
         </div>
 

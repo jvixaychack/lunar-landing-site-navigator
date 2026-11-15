@@ -1,6 +1,6 @@
 import { Radio, Sun, Zap } from 'lucide-react';
 import type { HourlyPoint, SeasonKpis, ViewMode } from '../types/lunar';
-import { computeDteSummary, formatSignedDeg } from '../utils/lunarAnalytics';
+import { computeEarthVisibilitySummary, formatSignedDeg } from '../utils/lunarAnalytics';
 import { useMemo } from 'react';
 
 interface KpiCardsProps {
@@ -12,7 +12,7 @@ interface KpiCardsProps {
 
 export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
   const current = hourly[hourIndex] ?? hourly[0];
-  const dteSummary = useMemo(() => computeDteSummary(hourly), [hourly]);
+  const earthVisibility = useMemo(() => computeEarthVisibilitySummary(hourly), [hourly]);
 
   const sunClearanceDeg = current
     ? current.sunElevationDeg - current.sunHorizonMaskDeg
@@ -74,32 +74,32 @@ export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
         )}
       </div>
 
-      {/* 2. Solar Power Potential % */}
+      {/* 2. Geometric sunlight availability */}
       <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
         <div className="flex items-center justify-between gap-1.5">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
             <Zap className="h-3.5 w-3.5 text-emerald-400" />
-            Solar Power
+            Sunlight Availability
           </span>
           <span
             className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${
-              kpis.solarPowerAvailabilityPct >= 75
+              kpis.sunlightAvailabilityPct >= 75
                 ? 'bg-emerald-500/15 text-emerald-300'
-                : kpis.solarPowerAvailabilityPct > 0
+                : kpis.sunlightAvailabilityPct > 0
                   ? 'bg-amber-500/15 text-amber-300'
                   : 'bg-rose-500/15 text-rose-300'
             }`}
           >
-            {kpis.solarPowerAvailabilityPct >= 75
+            {kpis.sunlightAvailabilityPct >= 75
               ? 'High'
-              : kpis.solarPowerAvailabilityPct > 0
+              : kpis.sunlightAvailabilityPct > 0
                 ? 'Partial'
-                : 'PSR (0%)'}
+                : 'No sunlight'}
           </span>
         </div>
 
         <div className="mt-2 font-mono text-2xl font-bold tracking-tight text-white">
-          {kpis.solarPowerAvailabilityPct.toFixed(1)}%
+          {kpis.sunlightAvailabilityPct.toFixed(1)}%
         </div>
 
         <div className="mt-1.5 space-y-0.5 font-mono text-[11px] text-slate-400">
@@ -117,17 +117,18 @@ export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
 
         {viewMode === 'explorer' && (
           <p className="mt-2 border-t border-slate-800/80 pt-1.5 text-[11px] leading-snug text-slate-300">
-            More sunlit hours mean smaller batteries and survival through the −200°C lunar night.
+            Direct sunlight can support power generation, but this model does not estimate power,
+            thermal balance, or system sizing.
           </p>
         )}
       </div>
 
-      {/* 3. Direct-to-Earth (DTE) Comms Windows */}
+      {/* 3. Geometric Earth line-of-sight windows */}
       <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
         <div className="flex items-center justify-between gap-1.5">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
             <Radio className="h-3.5 w-3.5 text-sky-400" />
-            DTE Comms
+            Earth LOS
           </span>
           {current && (
             <span
@@ -137,35 +138,35 @@ export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
                   : 'bg-rose-500/15 text-rose-300'
               }`}
             >
-              {current.earthVisible ? 'Link Up' : 'Blocked'}
+              {current.earthVisible ? 'Visible' : 'Blocked'}
             </span>
           )}
         </div>
 
         <div className="mt-2 font-mono text-2xl font-bold tracking-tight text-white">
-          {kpis.dteCommsUptimePct.toFixed(1)}%
+          {kpis.earthLineOfSightPct.toFixed(1)}%
         </div>
 
         <div className="mt-1.5 space-y-0.5 font-mono text-[11px] text-slate-400">
           <div className="flex justify-between">
             <span>Windows:</span>
             <span className="text-slate-300">
-              {dteSummary.windowCount}{' '}
-              {dteSummary.windowCount === 1 ? 'window' : 'windows'}
+              {earthVisibility.windowCount}{' '}
+              {earthVisibility.windowCount === 1 ? 'window' : 'windows'}
             </span>
           </div>
           <div className="flex justify-between">
             <span>Longest / Total:</span>
             <span className="text-slate-300">
-              {dteSummary.longestWindowHours}h / {kpis.earthVisibleHours}h
+              {earthVisibility.longestWindowHours}h / {kpis.earthVisibleHours}h
             </span>
           </div>
         </div>
 
         {viewMode === 'explorer' && (
           <p className="mt-2 border-t border-slate-800/80 pt-1.5 text-[11px] leading-snug text-slate-300">
-            Direct radio to Earth only works when Earth&apos;s figure-8 wobble rises above local
-            ridges.
+            This is geometric visibility only; radio link budgets and ground-network availability
+            are not modeled.
           </p>
         )}
       </div>
