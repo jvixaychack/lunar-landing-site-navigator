@@ -82,7 +82,7 @@ Precomputed ephemeris and horizon masks (`public/data/sites.json`) let the appli
 
 In accordance with NASA Space Apps Challenge rules regarding the use of Artificial Intelligence tools:
 
-- **AI Tools & Models Used:** **Google Antigravity** powered by **Gemini 4 Hydrogen**.
+- **AI Tools & Models Used:** **Google Antigravity (Gemini 4 Hydrogen)** and **Claude Sonnet 5.5** (used for project scaffolding, React/TypeScript UI refinement, Python data-pipeline generation, and documentation drafting; all planetary physics and NASA dataset outputs are deterministic and verified by the team).
 - **Scope of AI Assistance:**
   - Assisted with frontend UI/UX scaffolding (React, TypeScript, Tailwind CSS, OpenLayers `IAU2000:30120` projection setup, and 360° Polar Horizon Sky Plot SVG rendering).
   - Assisted with structuring the offline Python data-generation pipeline (`scripts/generate_lunar_data.py`), automated `pytest` validation (`tests/test_lunar_data.py`), static deployment configurations (`vercel.json`, `.github/workflows/deploy.yml`), and repository documentation (`README.md`, `SUBMISSION.md`).
