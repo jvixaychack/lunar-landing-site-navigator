@@ -38,6 +38,10 @@ interface LunarSouthPoleMapProps {
   sites: LunarSite[];
   selectedSite: LunarSite | null;
   onSelectSite: (site: LunarSite | null) => void;
+  /** Called with the clicked point (planetocentric latitude, east longitude 0..360) while pick mode is on. */
+  onPickPoint?: (latitudeDeg: number, longitudeDeg: number) => void;
+  /** When true, clicking empty map reports the point through onPickPoint. */
+  pickMode?: boolean;
 }
 
 const LUNASERV_WMS_URL = 'https://wms.im-ldi.com/';
@@ -46,7 +50,7 @@ const WMS_TIMEOUT_MS = 7000;
 
 function createPolarGridFeatures(): Feature[] {
   const features: Feature[] = [];
-  const latitudes = [-89, -88, -86, -84, -82];
+  const latitudes = [-89, -88, -86, -85, -84, -82]; // -85 marks the edge of the custom-point zone
 
   for (const lat of latitudes) {
     const coords: [number, number][] = [];
@@ -60,9 +64,14 @@ function createPolarGridFeatures(): Feature[] {
     ring.setStyle(
       new Style({
         stroke: new Stroke({
-          color: lat === -89 ? 'rgba(245, 158, 11, 0.25)' : 'rgba(148, 163, 184, 0.18)',
-          width: 1,
-          lineDash: [4, 4],
+          color:
+            lat === -85
+              ? 'rgba(245, 158, 11, 0.7)'
+              : lat === -89
+                ? 'rgba(245, 158, 11, 0.25)'
+                : 'rgba(148, 163, 184, 0.18)',
+          width: lat === -85 ? 1.5 : 1,
+          lineDash: lat === -85 ? [8, 5] : [4, 4],
         }),
       }),
     );
@@ -121,7 +130,18 @@ export function LunarSouthPoleMap({
   sites,
   selectedSite,
   onSelectSite,
+  onPickPoint,
+  pickMode = false,
 }: LunarSouthPoleMapProps) {
+  // Refs let the map's one-time click handler see the latest values without rebuilding the map.
+  const onPickPointRef = useRef(onPickPoint);
+  const pickModeRef = useRef(pickMode);
+  useEffect(() => {
+    onPickPointRef.current = onPickPoint;
+    pickModeRef.current = pickMode;
+    const el = mapRef.current?.getTargetElement();
+    if (el) el.style.cursor = pickMode ? 'crosshair' : '';
+  }, [onPickPoint, pickMode]);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const popupContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -253,7 +273,7 @@ export function LunarSouthPoleMap({
       });
       const targetEl = map.getTargetElement();
       if (targetEl) {
-        targetEl.style.cursor = hit ? 'pointer' : '';
+        targetEl.style.cursor = hit ? 'pointer' : pickModeRef.current ? 'crosshair' : '';
       }
     });
 
@@ -270,6 +290,11 @@ export function LunarSouthPoleMap({
           onSelectSite(site);
           return;
         }
+      }
+      if (pickModeRef.current && onPickPointRef.current) {
+        const { latitudeDeg, longitudeDeg } = stereoToLunarLatLon(evt.coordinate[0], evt.coordinate[1]);
+        onPickPointRef.current(latitudeDeg, longitudeDeg);
+        return;
       }
       onSelectSite(null);
     });
@@ -508,6 +533,12 @@ export function LunarSouthPoleMap({
           <LocateFixed className="h-4 w-4" />
         </button>
       </div>
+
+      {pickMode && (
+        <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full border border-amber-500/50 bg-slate-900/90 px-3 py-1 text-[11px] font-medium text-amber-200 backdrop-blur-md">
+          Pick mode: click the map poleward of 85°S
+        </div>
+      )}
 
       {/* Bottom-Right Projection & Cursor Telemetry */}
       <div className="pointer-events-none absolute right-3 bottom-8 z-10 flex items-center gap-3 rounded-lg border border-slate-700/70 bg-slate-900/85 px-3 py-1.5 font-mono text-[11px] text-slate-300 backdrop-blur-md">

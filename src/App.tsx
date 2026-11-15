@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   BookMarked,
   BookOpen,
@@ -12,11 +12,17 @@ import {
 } from 'lucide-react';
 import { AnalyticalDashboard } from './components/AnalyticalDashboard';
 import { CompareView } from './components/CompareView';
+import { CustomSiteForm } from './components/CustomSiteForm';
 import { DataCitationsModal } from './components/DataCitationsModal';
 import { LunarSouthPoleMap } from './components/LunarSouthPoleMap';
 import type { PlaybackSpeed } from './components/TimelineScrubber';
 import type { LunarSite, SitesDataset, ViewMode } from './types/lunar';
+import { buildCustomSite, createHttpTileLoader } from './utils/horizonMask';
 import { formatLunarLatLon } from './utils/lunarProjection';
+
+// One loader for the whole app so downloaded terrain tiles are cached and reused.
+const demLoader = createHttpTileLoader(import.meta.env.BASE_URL);
+const MAX_CUSTOM_SITES = 10;
 
 export function App() {
   const [dataset, setDataset] = useState<SitesDataset | null>(null);
@@ -28,6 +34,9 @@ export function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('planner');
   const [isCitationsOpen, setIsCitationsOpen] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [customSites, setCustomSites] = useState<LunarSite[]>([]);
+  const [pickMode, setPickMode] = useState<boolean>(false);
+  const [pickRequest, setPickRequest] = useState<{ latitudeDeg: number; longitudeDeg: number; nonce: number } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -83,7 +92,31 @@ export function App() {
   const handleMapSelectSite = useCallback((site: LunarSite | null) => {
     if (site) setSelectedSite(site);
   }, []);
-  const sites = dataset?.sites ?? [];
+  const sites = useMemo(() => [...(dataset?.sites ?? []), ...customSites], [dataset, customSites]);
+
+  const handleAddCustomSite = useCallback(
+    async (latitudeDeg: number, longitudeDeg: number, name: string) => {
+      const site = await buildCustomSite(latitudeDeg, longitudeDeg, demLoader, name);
+      setCustomSites((prev) => {
+        if (prev.some((s) => s.id === site.id)) return prev;
+        // Keep the list manageable when clicking around: drop the oldest beyond the limit.
+        return [...prev, site].slice(-MAX_CUSTOM_SITES);
+      });
+      setSelectedSite(site);
+    },
+    [],
+  );
+
+  const handleMapPickPoint = useCallback((latitudeDeg: number, longitudeDeg: number) => {
+    setPickRequest({ latitudeDeg, longitudeDeg, nonce: Date.now() });
+  }, []);
+
+  const handleTogglePickMode = useCallback(() => setPickMode((on) => !on), []);
+
+  const handleClearCustomSites = useCallback(() => {
+    setCustomSites([]);
+    setSelectedSite((current) => (current?.role === 'custom' ? dataset?.sites[0] ?? null : current));
+  }, [dataset]);
   const seasons = dataset?.metadata?.seasons ?? [];
 
   return (
@@ -197,6 +230,15 @@ export function App() {
           </div>
 
           <div className="flex-1 space-y-1.5 overflow-y-auto p-2.5">
+            <CustomSiteForm
+              onAdd={handleAddCustomSite}
+              customSiteCount={customSites.length}
+              onClear={handleClearCustomSites}
+              pickMode={pickMode}
+              onTogglePickMode={handleTogglePickMode}
+              pickRequest={pickRequest}
+            />
+
             {error && (
               <div className="rounded-lg border border-rose-500/40 bg-rose-950/50 p-3 text-xs text-rose-200">
                 {error}
@@ -283,6 +325,8 @@ export function App() {
         <section className="min-h-[380px] flex-1 lg:min-h-0">
       <LunarSouthPoleMap
           onSelectSite={handleMapSelectSite}
+          onPickPoint={handleMapPickPoint}
+          pickMode={pickMode}
           sites={sites}
           selectedSite={selectedSite}
           />

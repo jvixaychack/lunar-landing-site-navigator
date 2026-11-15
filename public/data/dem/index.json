@@ -1,0 +1,9 @@
+{
+  "demSize": 7600,
+  "tileSize": 475,
+  "tilesPerSide": 16,
+  "scaleM": 80.0,
+  "centerOffset": 3799.5,
+  "heightScaleM": 0.5,
+  "encoding": "int16-le, row delta-coded, gzip"
+}
