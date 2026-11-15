@@ -29,8 +29,6 @@ Topography pipeline:
   masks cached in ``scripts/lola_horizon_masks.json``.
 """
 
-test_variable = "Testing GitHub commit and push flow"
-
 from __future__ import annotations
 
 import argparse
