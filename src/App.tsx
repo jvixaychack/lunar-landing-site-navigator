@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   BookMarked,
   BookOpen,
@@ -80,7 +80,9 @@ export function App() {
     setSelectedSeasonId(seasonId);
     setHourIndex(0);
   };
-
+  const handleMapSelectSite = useCallback((site: LunarSite | null) => {
+    if (site) setSelectedSite(site);
+  }, []);
   const sites = dataset?.sites ?? [];
   const seasons = dataset?.metadata?.seasons ?? [];
 
@@ -279,12 +281,10 @@ export function App() {
 
         {/* Map Viewport */}
         <section className="min-h-[380px] flex-1 lg:min-h-0">
-          <LunarSouthPoleMap
-            sites={sites}
-            selectedSite={selectedSite}
-            onSelectSite={(site) => {
-              if (site) setSelectedSite(site);
-            }}
+      <LunarSouthPoleMap
+          onSelectSite={handleMapSelectSite}
+          sites={sites}
+          selectedSite={selectedSite}
           />
         </section>
 

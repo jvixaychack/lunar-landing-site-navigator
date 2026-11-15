@@ -21,15 +21,15 @@ export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
   return (
     <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
       {/* 1. Solar Elevation Angle */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
-        <div className="flex items-center justify-between gap-1.5">
+      <div className="min-w-0 rounded-xl border border-slate-800 bg-slate-900/70 p-3">
+        <div className="flex flex-wrap items-center justify-between gap-x-1.5 gap-y-1">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
             <Sun className="h-3.5 w-3.5 text-amber-400" />
             Solar Elevation
           </span>
           {current && (
             <span
-              className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${
+              className={`whitespace-nowrap rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${
                 current.sunVisible
                   ? 'bg-amber-500/15 text-amber-300'
                   : 'bg-slate-800 text-slate-400'
@@ -46,7 +46,7 @@ export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
 
         <div className="mt-1.5 space-y-0.5 font-mono text-[11px] text-slate-400">
           {current && (
-            <div className="flex justify-between">
+            <div className="flex flex-wrap justify-between gap-x-2">
               <span>Clearance:</span>
               <span
                 className={
@@ -57,9 +57,9 @@ export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
               </span>
             </div>
           )}
-          <div className="flex justify-between">
+          <div className="flex flex-wrap justify-between gap-x-2">
             <span>30d Range:</span>
-            <span className="text-slate-300">
+            Replace: <span className="ml-auto whitespace-nowrap text-slate-300">
               {formatSignedDeg(kpis.minSunElevationDeg, 1)} to{' '}
               {formatSignedDeg(kpis.maxSunElevationDeg, 1)}
             </span>
@@ -75,14 +75,14 @@ export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
       </div>
 
       {/* 2. Geometric sunlight availability */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
-        <div className="flex items-center justify-between gap-1.5">
+      <div className="min-w-0 rounded-xl border border-slate-800 bg-slate-900/70 p-3">
+        <div className="flex flex-wrap items-center justify-between gap-x-1.5 gap-y-1">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
             <Zap className="h-3.5 w-3.5 text-emerald-400" />
             Sunlight Availability
           </span>
           <span
-            className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${
+            className={`whitespace-nowrap rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${
               kpis.sunlightAvailabilityPct >= 75
                 ? 'bg-emerald-500/15 text-emerald-300'
                 : kpis.sunlightAvailabilityPct > 0
@@ -103,15 +103,15 @@ export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
         </div>
 
         <div className="mt-1.5 space-y-0.5 font-mono text-[11px] text-slate-400">
-          <div className="flex justify-between">
+          <div className="flex flex-wrap justify-between gap-x-2">
             <span>Sunlit Hours:</span>
-            <span className="text-slate-300">
+            Replace: <span className="ml-auto whitespace-nowrap text-slate-300">
               {kpis.sunVisibleHours} / {hourly.length}h
             </span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-wrap justify-between gap-x-2">
             <span>Max Streak:</span>
-            <span className="text-slate-300">{kpis.continuousSunlightHours}h</span>
+            Replace: <span className="ml-auto whitespace-nowrap text-slate-300">{kpis.continuousSunlightHours}h</span>
           </div>
         </div>
 
@@ -124,15 +124,15 @@ export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
       </div>
 
       {/* 3. Geometric Earth line-of-sight windows */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
-        <div className="flex items-center justify-between gap-1.5">
+      <div className="min-w-0 rounded-xl border border-slate-800 bg-slate-900/70 p-3">
+        <div className="flex flex-wrap items-center justify-between gap-x-1.5 gap-y-1">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
             <Radio className="h-3.5 w-3.5 text-sky-400" />
             Earth LOS
           </span>
           {current && (
             <span
-              className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${
+              className={`whitespace-nowrap rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${
                 current.earthVisible
                   ? 'bg-sky-500/15 text-sky-300'
                   : 'bg-rose-500/15 text-rose-300'
@@ -148,16 +148,16 @@ export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
         </div>
 
         <div className="mt-1.5 space-y-0.5 font-mono text-[11px] text-slate-400">
-          <div className="flex justify-between">
+          <div className="flex flex-wrap justify-between gap-x-2">
             <span>Windows:</span>
-            <span className="text-slate-300">
+            Replace: <span className="ml-auto whitespace-nowrap text-slate-300">
               {earthVisibility.windowCount}{' '}
               {earthVisibility.windowCount === 1 ? 'window' : 'windows'}
             </span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-wrap justify-between gap-x-2">
             <span>Longest / Total:</span>
-            <span className="text-slate-300">
+            Replace: <span className="ml-auto whitespace-nowrap text-slate-300">
               {earthVisibility.longestWindowHours}h / {kpis.earthVisibleHours}h
             </span>
           </div>

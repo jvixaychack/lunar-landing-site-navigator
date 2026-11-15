@@ -15,7 +15,7 @@ import { ScaleLine, defaults as defaultControls } from 'ol/control';
 import { Circle as CircleStyle, Fill, Stroke, Style, Text } from 'ol/style';
 import {
   AlertTriangle,
-  Compass,
+  LocateFixed,
   Layers,
   MapPin,
   Mountain,
@@ -488,7 +488,7 @@ export function LunarSouthPoleMap({
                 : 'Local LOLA Fallback'}
           </span>
           {wmsStatus === 'fallback' && (
-            <button
+                                <button
               type="button"
               onClick={handleRetryWms}
               className="ml-1 rounded bg-amber-500/20 px-1.5 py-0.5 text-[11px] font-semibold text-amber-200 hover:bg-amber-500/35"
@@ -498,14 +498,14 @@ export function LunarSouthPoleMap({
           )}
         </div>
 
-        <button
+                <button
           type="button"
           onClick={handleResetView}
-          title="Center on Lunar South Pole (90°S)"
-          className="pointer-events-auto flex items-center gap-1.5 rounded-lg border border-slate-700/80 bg-slate-900/85 px-2.5 py-1.5 text-xs font-medium text-slate-200 backdrop-blur-md transition hover:border-amber-500/50 hover:text-amber-300"
+          title="Re-center map on the South Pole (90°S)"
+          aria-label="Re-center map on the South Pole"
+          className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-lg border border-slate-700/80 bg-slate-900/85 text-slate-200 backdrop-blur-md transition hover:border-amber-500/50 hover:text-amber-300"
         >
-          <Compass className="h-3.5 w-3.5" />
-          90°S
+          <LocateFixed className="h-4 w-4" />
         </button>
       </div>
 
