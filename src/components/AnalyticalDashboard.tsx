@@ -8,6 +8,7 @@ import type {
 import { useSiteSeason } from '../hooks/useSiteSeason';
 import { formatLunarLatLon } from '../utils/lunarProjection';
 import { CountdownCards } from './CountdownCards';
+import { ViabilityCard } from './ViabilityCard';
 import { ExplorerCallouts } from './ExplorerCallouts';
 import { KpiCards } from './KpiCards';
 import { PolarHorizonSkyPlot } from './PolarHorizonSkyPlot';
@@ -144,6 +145,9 @@ export function AnalyticalDashboard({
           )}
         </div>
       </div>
+
+      {/* Good / Marginal / Poor screening for this site and window */}
+      <ViabilityCard hourly={seasonData.hourly} />
 
       {/* Time until sunset / Earthset at the selected moment */}
       <CountdownCards hourly={seasonData.hourly} hourIndex={safeHourIndex} />

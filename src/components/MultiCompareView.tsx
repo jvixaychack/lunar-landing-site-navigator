@@ -21,8 +21,10 @@ import {
   type EarthVisibilitySummary,
   type ShadowSummary,
 } from '../utils/lunarAnalytics';
+import { assessViability, RATING_LABEL, type Rating } from '../utils/viability';
 import { DatePickerInput } from './DatePickerInput';
 import { PolarHorizonSkyPlot, type ZoomMode } from './PolarHorizonSkyPlot';
+import { RATING_STYLE } from './ViabilityCard';
 import type { PlaybackSpeed } from './TimelineScrubber';
 
 interface MultiCompareViewProps {
@@ -74,6 +76,8 @@ interface MetricRow {
   /** true: bigger is better, false: smaller is better, null: informational only. */
   higherIsBetter: boolean | null;
   barPct?: (index: number) => number;
+  /** When set, the cell text is coloured as a Good / Marginal / Poor rating. */
+  rating?: (index: number) => Rating;
 }
 
 /** Indexes holding the best value, or an empty set when there is nothing meaningful to highlight. */
@@ -151,6 +155,11 @@ export function MultiCompareView({
     [r0.data, r1.data, r2.data, r3.data],
   );
 
+  const viabilities = useMemo(
+    () => [r0.data, r1.data, r2.data, r3.data].map((data) => (data ? assessViability(data.hourly) : null)),
+    [r0.data, r1.data, r2.data, r3.data],
+  );
+
   const columns: Column[] = scenarios.map((scenario, i) => ({
     scenario,
     site: siteFor(scenario),
@@ -213,10 +222,34 @@ export function MultiCompareView({
     return `${column?.site?.name ?? 'Unknown site'} · ${seasonName ?? (date ? `from ${date}` : 'no date')}`;
   };
 
-  const ready = columns.length > 0 && columns.every((c) => c.data && c.shadow && c.earth && c.site);
+  const ready =
+    columns.length > 0 &&
+    columns.every((c, i) => c.data && c.shadow && c.earth && c.site && viabilities[i]);
 
   const rows: MetricRow[] = ready
     ? [
+        {
+          label: 'Overall viability',
+          hint: 'The weaker of the power and comms ratings. A simple screening, not a mission requirement.',
+          values: columns.map(() => null),
+          text: (i) => RATING_LABEL[viabilities[i]!.overall],
+          higherIsBetter: null,
+          rating: (i) => viabilities[i]!.overall,
+        },
+        {
+          label: 'Solar power',
+          values: columns.map(() => null),
+          text: (i) => RATING_LABEL[viabilities[i]!.power.rating],
+          higherIsBetter: null,
+          rating: (i) => viabilities[i]!.power.rating,
+        },
+        {
+          label: 'Earth comms',
+          values: columns.map(() => null),
+          text: (i) => RATING_LABEL[viabilities[i]!.comms.rating],
+          higherIsBetter: null,
+          rating: (i) => viabilities[i]!.comms.rating,
+        },
         {
           label: 'Sunlight availability',
           hint: 'Share of the 30 days with the Sun above the terrain horizon',
@@ -501,7 +534,11 @@ export function MultiCompareView({
                         <td key={c.scenario.key} className="border-b border-slate-800/70 py-2 pr-3 align-top">
                           <div
                             className={`font-mono text-[12px] ${
-                              best.has(i) ? 'font-semibold text-amber-200' : 'text-slate-200'
+                              row.rating
+                                ? `font-semibold ${RATING_STYLE[row.rating(i)].text}`
+                                : best.has(i)
+                                  ? 'font-semibold text-amber-200'
+                                  : 'text-slate-200'
                             }`}
                           >
                             {best.has(i) && (
