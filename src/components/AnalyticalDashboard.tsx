@@ -7,6 +7,7 @@ import type {
 } from '../types/lunar';
 import { useSiteSeason } from '../hooks/useSiteSeason';
 import { formatLunarLatLon } from '../utils/lunarProjection';
+import { CountdownCards } from './CountdownCards';
 import { ExplorerCallouts } from './ExplorerCallouts';
 import { KpiCards } from './KpiCards';
 import { PolarHorizonSkyPlot } from './PolarHorizonSkyPlot';
@@ -143,6 +144,9 @@ export function AnalyticalDashboard({
           )}
         </div>
       </div>
+
+      {/* Time until sunset / Earthset at the selected moment */}
+      <CountdownCards hourly={seasonData.hourly} hourIndex={safeHourIndex} />
 
       {/* KPI Cards */}
       <KpiCards
