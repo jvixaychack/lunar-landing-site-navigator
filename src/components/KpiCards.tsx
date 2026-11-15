@@ -59,7 +59,7 @@ export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
           )}
           <div className="flex flex-wrap justify-between gap-x-2">
             <span>30d Range:</span>
-            Replace: <span className="ml-auto whitespace-nowrap text-slate-300">
+            <span className="ml-auto whitespace-nowrap text-slate-300">
               {formatSignedDeg(kpis.minSunElevationDeg, 1)} to{' '}
               {formatSignedDeg(kpis.maxSunElevationDeg, 1)}
             </span>
@@ -105,13 +105,13 @@ export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
         <div className="mt-1.5 space-y-0.5 font-mono text-[11px] text-slate-400">
           <div className="flex flex-wrap justify-between gap-x-2">
             <span>Sunlit Hours:</span>
-            Replace: <span className="ml-auto whitespace-nowrap text-slate-300">
+            <span className="ml-auto whitespace-nowrap text-slate-300">
               {kpis.sunVisibleHours} / {hourly.length}h
             </span>
           </div>
           <div className="flex flex-wrap justify-between gap-x-2">
             <span>Max Streak:</span>
-            Replace: <span className="ml-auto whitespace-nowrap text-slate-300">{kpis.continuousSunlightHours}h</span>
+            <span className="ml-auto whitespace-nowrap text-slate-300">{kpis.continuousSunlightHours}h</span>
           </div>
         </div>
 
@@ -150,14 +150,14 @@ export function KpiCards({ kpis, hourly, hourIndex, viewMode }: KpiCardsProps) {
         <div className="mt-1.5 space-y-0.5 font-mono text-[11px] text-slate-400">
           <div className="flex flex-wrap justify-between gap-x-2">
             <span>Windows:</span>
-            Replace: <span className="ml-auto whitespace-nowrap text-slate-300">
+            <span className="ml-auto whitespace-nowrap text-slate-300">
               {earthVisibility.windowCount}{' '}
               {earthVisibility.windowCount === 1 ? 'window' : 'windows'}
             </span>
           </div>
           <div className="flex flex-wrap justify-between gap-x-2">
             <span>Longest / Total:</span>
-            Replace: <span className="ml-auto whitespace-nowrap text-slate-300">
+            <span className="ml-auto whitespace-nowrap text-slate-300">
               {earthVisibility.longestWindowHours}h / {kpis.earthVisibleHours}h
             </span>
           </div>
