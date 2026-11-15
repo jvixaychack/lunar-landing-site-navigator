@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowLeftRight,
   CalendarRange,
@@ -21,7 +21,6 @@ import {
 import type {
   LunarSite,
   SeasonMetadata,
-  SiteSeasonData,
 } from '../types/lunar';
 import {
   computeDteSummary,
@@ -29,7 +28,9 @@ import {
   formatSignedDeg,
   formatUtcTimestamp,
 } from '../utils/lunarAnalytics';
+import { useSiteSeason } from '../hooks/useSiteSeason';
 import { formatLunarLatLon } from '../utils/lunarProjection';
+import { DatePickerInput } from './DatePickerInput';
 import { PolarHorizonSkyPlot, type ZoomMode } from './PolarHorizonSkyPlot';
 import type { PlaybackSpeed } from './TimelineScrubber';
 
@@ -47,14 +48,6 @@ interface CompareViewProps {
   onChangeSpeed: (speed: PlaybackSpeed) => void;
 }
 
-function getSeasonData(
-  site: LunarSite | undefined,
-  seasonId: string,
-): SiteSeasonData | undefined {
-  if (!site?.seasons) return undefined;
-  return site.seasons[seasonId] ?? Object.values(site.seasons)[0];
-}
-
 function formatDeltaNumber(
   delta: number,
   unit: string,
@@ -62,6 +55,12 @@ function formatDeltaNumber(
 ): string {
   const sign = delta > 0 ? '+' : delta < 0 ? '−' : '';
   return `${sign}${Math.abs(delta).toFixed(decimals)}${unit}`;
+}
+
+function getWindowLabel(season: SeasonMetadata | undefined, startDate: string): string {
+  if (season?.timeRange.start.slice(0, 10) === startDate) return season.name;
+  if (!startDate) return 'Select start date';
+  return `30 days from ${formatUtcTimestamp(`${startDate}T00:00:00Z`).dateLabel}`;
 }
 
 export function CompareView({
@@ -96,6 +95,9 @@ export function CompareView({
 
   // Mode A ('sites'): two sites on the same seasonal window
   const [sharedSeasonId, setSharedSeasonId] = useState<string>(defaultSeasonA);
+  const [sharedStartDate, setSharedStartDate] = useState(
+    () => seasons.find((season) => season.id === defaultSeasonA)?.timeRange.start.slice(0, 10) ?? '',
+  );
   const [siteAId, setSiteAId] = useState<string>(defaultSiteA);
   const [siteBId, setSiteBId] = useState<string>(defaultSiteB);
 
@@ -103,6 +105,27 @@ export function CompareView({
   const [sharedSiteId, setSharedSiteId] = useState<string>(defaultSiteA);
   const [seasonAId, setSeasonAId] = useState<string>(defaultSeasonA);
   const [seasonBId, setSeasonBId] = useState<string>(defaultSeasonB);
+  const [startDateA, setStartDateA] = useState(
+    () => seasons.find((season) => season.id === defaultSeasonA)?.timeRange.start.slice(0, 10) ?? '',
+  );
+  const [startDateB, setStartDateB] = useState(
+    () => seasons.find((season) => season.id === defaultSeasonB)?.timeRange.start.slice(0, 10) ?? '',
+  );
+
+  useEffect(() => {
+    if (!sharedSeasonId && defaultSeasonA) setSharedSeasonId(defaultSeasonA);
+    if (!sharedStartDate && defaultSeasonA) {
+      setSharedStartDate(seasons.find((season) => season.id === defaultSeasonA)?.timeRange.start.slice(0, 10) ?? '');
+    }
+    if (!seasonAId && defaultSeasonA) setSeasonAId(defaultSeasonA);
+    if (!startDateA && defaultSeasonA) {
+      setStartDateA(seasons.find((season) => season.id === defaultSeasonA)?.timeRange.start.slice(0, 10) ?? '');
+    }
+    if (!seasonBId && defaultSeasonB) setSeasonBId(defaultSeasonB);
+    if (!startDateB && defaultSeasonB) {
+      setStartDateB(seasons.find((season) => season.id === defaultSeasonB)?.timeRange.start.slice(0, 10) ?? '');
+    }
+  }, [defaultSeasonA, defaultSeasonB, seasons, sharedSeasonId, sharedStartDate, seasonAId, startDateA, seasonBId, startDateB]);
 
   const resolvedSiteA =
     sites.find((s) => s.id === (compareMode === 'sites' ? siteAId : sharedSiteId)) ??
@@ -120,8 +143,14 @@ export function CompareView({
   const resolvedSeasonB =
     seasons.find((s) => s.id === resolvedSeasonIdB) ?? seasons[0];
 
-  const dataA = getSeasonData(resolvedSiteA, resolvedSeasonIdA);
-  const dataB = getSeasonData(resolvedSiteB, resolvedSeasonIdB);
+  const resolvedStartDateA = compareMode === 'sites' ? sharedStartDate : startDateA;
+  const resolvedStartDateB = compareMode === 'sites' ? sharedStartDate : startDateB;
+  const windowLabelA = getWindowLabel(resolvedSeasonA, resolvedStartDateA);
+  const windowLabelB = getWindowLabel(resolvedSeasonB, resolvedStartDateB);
+  const resultA = useSiteSeason(resolvedSiteA, resolvedSeasonIdA, resolvedStartDateA, seasons);
+  const resultB = useSiteSeason(resolvedSiteB, resolvedSeasonIdB, resolvedStartDateB, seasons);
+  const dataA = resultA.data;
+  const dataB = resultB.data;
 
   const shadowA = useMemo(
     () => (dataA ? computeShadowSummary(dataA.hourly) : null),
@@ -141,9 +170,10 @@ export function CompareView({
   );
 
   if (!resolvedSiteA || !resolvedSiteB || !dataA || !dataB || !shadowA || !shadowB || !dteA || !dteB) {
+    const error = resultA.error ?? resultB.error;
     return (
-      <div className="flex h-full items-center justify-center rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-xs text-slate-400">
-        Loading comparison scenarios…
+      <div className={`flex h-full items-center justify-center rounded-xl border p-6 text-xs ${error ? 'border-rose-500/40 bg-rose-950/30 text-rose-200' : 'border-slate-800 bg-slate-900/60 text-slate-400'}`} role={error ? 'alert' : 'status'}>
+        {error ?? (resultA.loading || resultB.loading ? 'Calculating 30-day comparison ephemerides…' : 'Loading comparison scenarios…')}
       </div>
     );
   }
@@ -172,7 +202,24 @@ export function CompareView({
     } else {
       setSeasonAId(seasonBId);
       setSeasonBId(seasonAId);
+      setStartDateA(startDateB);
+      setStartDateB(startDateA);
     }
+  };
+
+  const handleSeasonChange = (scenario: 'A' | 'B', seasonId: string) => {
+    const startDate = seasons.find((season) => season.id === seasonId)?.timeRange.start.slice(0, 10) ?? '';
+    if (compareMode === 'sites') {
+      setSharedSeasonId(seasonId);
+      setSharedStartDate(startDate);
+    } else if (scenario === 'A') {
+      setSeasonAId(seasonId);
+      setStartDateA(startDate);
+    } else {
+      setSeasonBId(seasonId);
+      setStartDateB(startDate);
+    }
+    onChangeHour(0);
   };
 
   const applyShackletonVsCraterPreset = () => {
@@ -190,8 +237,14 @@ export function CompareView({
     if (rim) setSharedSiteId(rim.id);
     const summer = seasons.find((s) => s.id === 'summer-solstice');
     const winter = seasons.find((s) => s.id === 'winter-solstice');
-    if (summer) setSeasonAId(summer.id);
-    if (winter) setSeasonBId(winter.id);
+    if (summer) {
+      setSeasonAId(summer.id);
+      setStartDateA(summer.timeRange.start.slice(0, 10));
+    }
+    if (winter) {
+      setSeasonBId(winter.id);
+      setStartDateB(winter.timeRange.start.slice(0, 10));
+    }
     onChangeHour(0);
   };
 
@@ -348,13 +401,7 @@ export function CompareView({
                 </span>
                 <select
                   value={resolvedSeasonIdA}
-                  onChange={(e) => {
-                    if (compareMode === 'sites') {
-                      setSharedSeasonId(e.target.value);
-                    } else {
-                      setSeasonAId(e.target.value);
-                    }
-                  }}
+                  onChange={(e) => handleSeasonChange('A', e.target.value)}
                   className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-white focus:border-amber-500 focus:outline-none"
                 >
                   {seasons.map((season) => (
@@ -365,6 +412,21 @@ export function CompareView({
                 </select>
               </label>
             </div>
+            <label className="mt-2 block">
+              <span className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                30-Day Window Start (UTC)
+              </span>
+              <DatePickerInput
+                value={resolvedStartDateA}
+                onChange={(date) => {
+                  if (compareMode === 'sites') setSharedStartDate(date);
+                  else setStartDateA(date);
+                  onChangeHour(0);
+                }}
+                ariaLabel="Scenario A 30-day window start date in UTC"
+                className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white focus:border-amber-500 focus:outline-none"
+              />
+            </label>
           </div>
 
           {/* Swap Button */}
@@ -425,13 +487,7 @@ export function CompareView({
                 </span>
                 <select
                   value={resolvedSeasonIdB}
-                  onChange={(e) => {
-                    if (compareMode === 'sites') {
-                      setSharedSeasonId(e.target.value);
-                    } else {
-                      setSeasonBId(e.target.value);
-                    }
-                  }}
+                  onChange={(e) => handleSeasonChange('B', e.target.value)}
                   className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-white focus:border-sky-500 focus:outline-none"
                 >
                   {seasons.map((season) => (
@@ -442,6 +498,21 @@ export function CompareView({
                 </select>
               </label>
             </div>
+            <label className="mt-2 block">
+              <span className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                30-Day Window Start (UTC)
+              </span>
+              <DatePickerInput
+                value={resolvedStartDateB}
+                onChange={(date) => {
+                  if (compareMode === 'sites') setSharedStartDate(date);
+                  else setStartDateB(date);
+                  onChangeHour(0);
+                }}
+                ariaLabel="Scenario B 30-day window start date in UTC"
+                className="w-full rounded-md border border-slate-700 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white focus:border-sky-500 focus:outline-none"
+              />
+            </label>
           </div>
         </div>
       </div>
@@ -571,6 +642,9 @@ export function CompareView({
             className="h-1.5 w-full cursor-pointer accent-amber-400"
           />
         </div>
+        <p className="mt-1 text-[10px] text-slate-500" aria-live="polite">
+          Scenario A: {resultA.source} · Scenario B: {resultB.source}
+        </p>
       </div>
 
       {/* Synchronized Horizon Sky-Plots */}
@@ -584,7 +658,7 @@ export function CompareView({
                   A
                 </span>
                 <span className="text-xs font-bold text-white">{resolvedSiteA.name}</span>
-                <span className="text-[11px] text-slate-400">· {resolvedSeasonA?.name}</span>
+                <span className="text-[11px] text-slate-400">· {windowLabelA}</span>
               </div>
               <div className="mt-0.5 font-mono text-[10px] text-slate-400">
                 {timeA.dateLabel} · {timeA.timeLabel} · Elev{' '}
@@ -625,7 +699,7 @@ export function CompareView({
             viewMode="planner"
             zoomMode={zoomMode}
             onToggleZoom={() => setZoomMode((z) => (z === 'wide' ? 'horizon' : 'wide'))}
-            subtitle={`${resolvedSiteA.name} · ${resolvedSeasonA?.name ?? ''}`}
+            subtitle={`${resolvedSiteA.name} · ${windowLabelA}`}
           />
         </div>
 
@@ -638,7 +712,7 @@ export function CompareView({
                   B
                 </span>
                 <span className="text-xs font-bold text-white">{resolvedSiteB.name}</span>
-                <span className="text-[11px] text-slate-400">· {resolvedSeasonB?.name}</span>
+                <span className="text-[11px] text-slate-400">· {windowLabelB}</span>
               </div>
               <div className="mt-0.5 font-mono text-[10px] text-slate-400">
                 {timeB.dateLabel} · {timeB.timeLabel} · Elev{' '}
@@ -679,7 +753,7 @@ export function CompareView({
             viewMode="planner"
             zoomMode={zoomMode}
             onToggleZoom={() => setZoomMode((z) => (z === 'wide' ? 'horizon' : 'wide'))}
-            subtitle={`${resolvedSiteB.name} · ${resolvedSeasonB?.name ?? ''}`}
+            subtitle={`${resolvedSiteB.name} · ${windowLabelB}`}
           />
         </div>
       </div>
@@ -713,13 +787,13 @@ export function CompareView({
                 <th className="py-2.5 px-3 font-semibold text-amber-300">
                   Scenario A · {resolvedSiteA.name}
                   <span className="block font-normal normal-case text-slate-400">
-                    {resolvedSeasonA?.name}
+                    {windowLabelA}
                   </span>
                 </th>
                 <th className="py-2.5 px-3 font-semibold text-sky-300">
                   Scenario B · {resolvedSiteB.name}
                   <span className="block font-normal normal-case text-slate-400">
-                    {resolvedSeasonB?.name}
+                    {windowLabelB}
                   </span>
                 </th>
                 <th className="py-2.5 pl-3 font-semibold text-slate-200">

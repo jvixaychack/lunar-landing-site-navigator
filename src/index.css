@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "ol/ol.css";
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
 /* Custom OpenLayers control styling for dark lunar theme */
 .ol-control {
   background-color: rgba(15, 23, 42, 0.78) !important;

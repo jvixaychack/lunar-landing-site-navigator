@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react';
 import { Compass, MapPin, Mountain } from 'lucide-react';
 import type {
   LunarSite,
   SeasonMetadata,
   ViewMode,
 } from '../types/lunar';
+import { useSiteSeason } from '../hooks/useSiteSeason';
 import { formatLunarLatLon } from '../utils/lunarProjection';
 import { ExplorerCallouts } from './ExplorerCallouts';
 import { KpiCards } from './KpiCards';
@@ -37,6 +39,16 @@ export function AnalyticalDashboard({
   onChangeSpeed,
   viewMode,
 }: AnalyticalDashboardProps) {
+  const [startDate, setStartDate] = useState(
+    () => seasons.find((season) => season.id === selectedSeasonId)?.timeRange.start.slice(0, 10) ?? '',
+  );
+  const season = seasons.find((item) => item.id === selectedSeasonId);
+  const seasonResult = useSiteSeason(site ?? undefined, selectedSeasonId, startDate, seasons);
+
+  useEffect(() => {
+    if (season) setStartDate(season.timeRange.start.slice(0, 10));
+  }, [season]);
+
   if (!site) {
     return (
       <div className="flex h-full flex-col items-center justify-center rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-center">
@@ -52,11 +64,23 @@ export function AnalyticalDashboard({
     );
   }
 
-  const seasonData =
-    site.seasons?.[selectedSeasonId] ??
-    (site.seasons ? Object.values(site.seasons)[0] : undefined);
+  const seasonData = seasonResult.data;
 
   if (!seasonData) {
+    if (seasonResult.loading) {
+      return (
+        <div className="flex h-full items-center justify-center rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-xs text-slate-400" role="status">
+          Calculating 30-day ephemeris for {startDate || 'selected date'}…
+        </div>
+      );
+    }
+    if (seasonResult.error) {
+      return (
+        <div className="flex h-full items-center justify-center rounded-xl border border-rose-500/40 bg-rose-950/30 p-6 text-xs text-rose-200" role="alert">
+          {seasonResult.error}
+        </div>
+      );
+    }
     return (
       <div className="flex h-full items-center justify-center rounded-xl border border-slate-800 bg-slate-900/60 p-6 text-xs text-slate-400">
         No ephemeris data available for {site.name}.
@@ -147,6 +171,13 @@ export function AnalyticalDashboard({
         seasons={seasons}
         selectedSeasonId={selectedSeasonId}
         onSelectSeason={onSelectSeason}
+        startDate={startDate}
+        onChangeStartDate={(date) => {
+          setStartDate(date);
+          onChangeHour(0);
+        }}
+        dataSource={seasonResult.source}
+        isLoading={seasonResult.loading}
       />
 
       {/* Explorer (Educator) Mode Callouts */}

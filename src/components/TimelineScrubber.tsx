@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import type { HourlyPoint, SeasonMetadata } from '../types/lunar';
 import { formatUtcTimestamp } from '../utils/lunarAnalytics';
+import { DatePickerInput } from './DatePickerInput';
 
 export type PlaybackSpeed = 1 | 2 | 4;
 
@@ -24,6 +25,10 @@ interface TimelineScrubberProps {
   seasons: SeasonMetadata[];
   selectedSeasonId: string;
   onSelectSeason: (seasonId: string) => void;
+  startDate: string;
+  onChangeStartDate: (startDate: string) => void;
+  dataSource?: string;
+  isLoading?: boolean;
 }
 
 export function TimelineScrubber({
@@ -37,6 +42,10 @@ export function TimelineScrubber({
   seasons,
   selectedSeasonId,
   onSelectSeason,
+  startDate,
+  onChangeStartDate,
+  dataSource,
+  isLoading = false,
 }: TimelineScrubberProps) {
   const maxIndex = Math.max(0, hourly.length - 1);
   const current = hourly[hourIndex] ?? hourly[0];
@@ -73,34 +82,50 @@ export function TimelineScrubber({
           </div>
         </div>
 
-        {seasons.length > 0 && (
-          <div className="flex items-center gap-1 rounded-lg border border-slate-800 bg-slate-950/70 p-0.5">
-            {seasons.map((s) => {
-              const active = s.id === selectedSeasonId;
-              const shortName = s.name
-                .replace(' 2026', '')
-                .replace(' 2027', '')
-                .replace('Summer Solstice', 'Summer')
-                .replace('Winter Solstice', 'Winter');
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => onSelectSeason(s.id)}
-                  title={s.description}
-                  className={`rounded-md px-2 py-1 text-[11px] font-medium transition ${
-                    active
-                      ? 'bg-amber-500/20 text-amber-300 ring-1 ring-amber-500/40'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  {shortName}
-                </button>
-              );
-            })}
-          </div>
-        )}
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          {seasons.length > 0 && (
+            <div className="flex items-center gap-1 rounded-lg border border-slate-800 bg-slate-950/70 p-0.5">
+              {seasons.map((s) => {
+                const active = s.id === selectedSeasonId && startDate === s.timeRange.start.slice(0, 10);
+                const shortName = s.name
+                  .replace(' 2026', '')
+                  .replace(' 2027', '')
+                  .replace('Summer Solstice', 'Summer')
+                  .replace('Winter Solstice', 'Winter');
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => onSelectSeason(s.id)}
+                    title={s.description}
+                    className={`rounded-md px-2 py-1 text-[11px] font-medium transition ${
+                      active
+                        ? 'bg-amber-500/20 text-amber-300 ring-1 ring-amber-500/40'
+                        : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {shortName}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          <label className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wide text-slate-400">
+            Window start (UTC)
+            <DatePickerInput
+              value={startDate}
+              onChange={onChangeStartDate}
+              ariaLabel="30-day timeline start date in UTC"
+              className="rounded-md border border-slate-700 bg-slate-950 px-2 py-1 font-mono text-[11px] normal-case text-slate-200 focus:border-amber-500 focus:outline-none"
+            />
+          </label>
+        </div>
       </div>
+      {(isLoading || dataSource) && (
+        <p className="mt-1 text-right text-[10px] text-slate-500" aria-live="polite">
+          {isLoading ? 'Calculating 30-day ephemeris…' : `Data: ${dataSource}`}
+        </p>
+      )}
 
       {/* Sun & Earth Visibility Barcode Strip */}
       {hourly.length > 0 && (

@@ -165,7 +165,10 @@ export function DataCitationsModal({
               <span className="font-mono text-slate-200">
                 {metadata?.coordinateFrame ?? 'MEAN_ME (Mean Earth / Polar Axis)'}
               </span>{' '}
-              frame with atmospheric refraction disabled across 30-day seasonal mission windows.
+              frame with atmospheric refraction disabled across 30-day mission windows. Selecting
+              a custom date requests a fresh hourly series; if a server-side Horizons request is
+              unavailable, the timeline uses the same deterministic analytical lunar ephemeris
+              and libration model used by the data-generation fallback.
             </p>
             <p className="mt-2 font-mono text-[11px] text-slate-400">
               Credit: Jet Propulsion Laboratory, California Institute of Technology / NASA Solar System Dynamics.
