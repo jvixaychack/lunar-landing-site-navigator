@@ -11,7 +11,7 @@ import {
   Sun,
 } from 'lucide-react';
 import { AnalyticalDashboard } from './components/AnalyticalDashboard';
-import { CompareView } from './components/CompareView';
+import { CompareHub } from './components/CompareHub';
 import { CustomSiteForm } from './components/CustomSiteForm';
 import { DataCitationsModal } from './components/DataCitationsModal';
 import { LunarSouthPoleMap } from './components/LunarSouthPoleMap';
@@ -206,7 +206,7 @@ export function App() {
                 {error}
               </div>
             ) : (
-              <CompareView
+              <CompareHub
                 sites={sites}
                 seasons={seasons}
                 defaultSeasonId={dataset?.metadata?.defaultSeason ?? selectedSeasonId}
